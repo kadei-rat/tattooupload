@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "tsc --noEmit && esbuild ts/app.ts --bundle --outfile=priv/app.js",
+    "watch": "esbuild ts/app.ts --bundle --outfile=priv/app.js --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "esbuild": "^0.27.2",
+    "typescript": "^5.9.3"
+  }
+}
