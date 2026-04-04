@@ -65,12 +65,16 @@ fn submissions_grid(submissions: List(Submission)) -> Element(Nil) {
 fn submission_card(submission: Submission) -> Element(Nil) {
   let id_str = int.to_string(submission.id)
   html.div([attribute.class("submission-card")], [
-    html.img([
-      attribute.src("/submissions/" <> id_str <> "/image"),
-      attribute.alt(submission.image_filename),
-      attribute.class("submission-thumbnail"),
-      attribute.attribute("loading", "lazy"),
-    ]),
+    case submission.status {
+      "pending" ->
+        html.img([
+          attribute.src("/submissions/" <> id_str <> "/image"),
+          attribute.alt(submission.image_filename),
+          attribute.class("submission-thumbnail"),
+          attribute.attribute("loading", "lazy"),
+        ])
+      _ -> element.none()
+    },
     html.div([attribute.class("submission-info")], [
       html.div([attribute.class("submission-filename")], [
         html.text(submission.image_filename),
