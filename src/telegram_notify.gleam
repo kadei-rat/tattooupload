@@ -12,7 +12,7 @@ pub fn notify_ready(token: String, chat_id: Int) -> Nil {
       #(
         "text",
         json.string(
-          "Your tattoo sticker is ready! Come pick it up \u{1f389}",
+          "Your temporary tattoo is ready for picking up at the Furry High Commission.\n\nIf you're unable to pick up in person at the FHC for accessibility reasons, message @kadei_rat to arrange delivery.",
         ),
       ),
     ])
