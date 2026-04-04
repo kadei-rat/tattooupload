@@ -19,13 +19,13 @@ import lenient_parse
 import logging
 import lustre/element
 import models/role
+import models/submissions.{type ImageData}
 import models/submissions_db
 import models/users_db
 import session
 import simplifile
 import telegram_auth
 import telegram_notify
-import models/submissions.{type ImageData}
 import wisp.{type Request, type Response}
 
 fn log_and_redirect_error(
@@ -175,7 +175,11 @@ pub fn serve_image(
   }
 }
 
-pub fn download_all_pending(req: Request, db: DbCoordName, _conf: Config) -> Response {
+pub fn download_all_pending(
+  req: Request,
+  db: DbCoordName,
+  _conf: Config,
+) -> Response {
   use session_data <- session.require_session(req, "/")
   use <- session.require_admin(session_data, "/")
 
@@ -183,12 +187,16 @@ pub fn download_all_pending(req: Request, db: DbCoordName, _conf: Config) -> Res
     Error(err) -> log_and_redirect_error("/admin", "Download all", err)
     Ok([]) -> wisp.redirect("/admin")
     Ok(images) -> {
-      let files = list.map(images, fn(img: ImageData) { #(img.filename, img.data) })
+      let files =
+        list.map(images, fn(img: ImageData) { #(img.filename, img.data) })
       case zip_create(files) {
         Ok(zip_bytes) ->
           wisp.response(200)
           |> wisp.set_header("content-type", "application/zip")
-          |> wisp.set_header("content-disposition", "attachment; filename=\"pending-stickers.zip\"")
+          |> wisp.set_header(
+            "content-disposition",
+            "attachment; filename=\"pending-stickers.zip\"",
+          )
           |> wisp.set_body(wisp.Bytes(bytes_tree.from_bit_array(zip_bytes)))
         Error(_) -> {
           logging.log(logging.Error, "Failed to create zip archive")

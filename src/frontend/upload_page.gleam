@@ -10,8 +10,7 @@ pub fn view(
 ) -> List(Element(Nil)) {
   [
     case error {
-      Some(msg) ->
-        html.div([attribute.class("error-banner")], [html.text(msg)])
+      Some(msg) -> html.div([attribute.class("error-banner")], [html.text(msg)])
       None -> element.none()
     },
     html.div([attribute.class("upload-container")], [

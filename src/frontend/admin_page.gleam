@@ -8,8 +8,7 @@ import lustre/element/html
 import models/submissions.{type Submission}
 
 pub fn view(submissions: List(Submission)) -> List(Element(Nil)) {
-  let pending =
-    list.filter(submissions, fn(s) { s.status == "pending" })
+  let pending = list.filter(submissions, fn(s) { s.status == "pending" })
   let done = list.filter(submissions, fn(s) { s.status == "done" })
 
   [
@@ -81,9 +80,7 @@ fn submission_card(submission: Submission) -> Element(Nil) {
       ]),
       html.div(
         [
-          attribute.class(
-            "status-badge status-" <> submission.status,
-          ),
+          attribute.class("status-badge status-" <> submission.status),
         ],
         [html.text(submission.status)],
       ),
@@ -101,9 +98,7 @@ fn submission_card(submission: Submission) -> Element(Nil) {
     html.div([attribute.class("submission-actions")], [
       html.a(
         [
-          attribute.href(
-            "/submissions/" <> id_str <> "/image?download=true",
-          ),
+          attribute.href("/submissions/" <> id_str <> "/image?download=true"),
           attribute.class("download-btn"),
         ],
         [html.text("Download")],
@@ -112,9 +107,7 @@ fn submission_card(submission: Submission) -> Element(Nil) {
         "pending" ->
           html.form(
             [
-              attribute.action(
-                "/admin/submissions/" <> id_str <> "/done",
-              ),
+              attribute.action("/admin/submissions/" <> id_str <> "/done"),
               attribute.method("post"),
             ],
             [

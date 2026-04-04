@@ -77,4 +77,3 @@ fn display_name(user: User) -> String {
     None -> user.first_name
   }
 }
-

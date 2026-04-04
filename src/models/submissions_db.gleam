@@ -3,7 +3,9 @@ import errors.{type AppError}
 import gleam/dynamic/decode
 import gleam/option.{type Option}
 import gleam/result
-import models/submissions.{type ImageData, type Submission, ImageData, Submission}
+import models/submissions.{
+  type ImageData, type Submission, ImageData, Submission,
+}
 import pog
 
 pub fn create(
@@ -59,10 +61,7 @@ pub fn get_all(db: DbCoordName) -> Result(List(Submission), AppError) {
   Ok(rows.rows)
 }
 
-pub fn get_image_data(
-  db: DbCoordName,
-  id: Int,
-) -> Result(ImageData, AppError) {
+pub fn get_image_data(db: DbCoordName, id: Int) -> Result(ImageData, AppError) {
   let sql =
     "
     SELECT image_data, image_content_type, image_filename
@@ -108,10 +107,7 @@ pub fn get_all_pending_images(
   Ok(rows.rows)
 }
 
-pub fn mark_done(
-  db: DbCoordName,
-  id: Int,
-) -> Result(Submission, AppError) {
+pub fn mark_done(db: DbCoordName, id: Int) -> Result(Submission, AppError) {
   let sql =
     "
     UPDATE submissions

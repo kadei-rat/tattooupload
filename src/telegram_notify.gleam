@@ -18,10 +18,7 @@ pub fn notify_ready(token: String, chat_id: Int) -> Nil {
     ])
     |> json.to_string
 
-  let url =
-    "https://api.telegram.org/bot"
-    <> token
-    <> "/sendMessage"
+  let url = "https://api.telegram.org/bot" <> token <> "/sendMessage"
 
   case request.to(url) {
     Error(_) -> {
