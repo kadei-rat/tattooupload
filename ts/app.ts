@@ -1,7 +1,7 @@
 export {};
 
 document.addEventListener('DOMContentLoaded', () => {
-  initErrorBanner();
+  enhanceErrorBanner();
   initTelegramLogin();
 });
 
@@ -27,8 +27,6 @@ function initTelegramLogin() {
 declare global {
   interface Window {
     onTelegramAuth: (user: TelegramUser) => void;
-    dismissErrorBanner: () => void;
-    showErrorBanner: (message: string) => void;
   }
 }
 
@@ -42,46 +40,22 @@ interface TelegramUser {
   hash: string;
 }
 
-function initErrorBanner() {
-  const params = new URLSearchParams(window.location.search);
-  const error = params.get('error');
-  if (error) {
-    window.showErrorBanner(error);
-  }
-}
-
-window.showErrorBanner = function(message: string) {
-  const existing = document.getElementById('error-banner');
-  if (existing) existing.remove();
-
-  const banner = document.createElement('div');
-  banner.className = 'error-banner';
-  banner.id = 'error-banner';
-
-  const span = document.createElement('span');
-  span.textContent = message;
+function enhanceErrorBanner() {
+  const banner = document.querySelector('.error-banner');
+  if (!banner) return;
 
   const dismiss = document.createElement('button');
   dismiss.className = 'error-banner-dismiss';
   dismiss.type = 'button';
   dismiss.textContent = '\u00D7';
-  dismiss.onclick = () => banner.remove();
-
-  banner.appendChild(span);
+  dismiss.onclick = () => {
+    banner.remove();
+    const url = new URL(window.location.href);
+    url.searchParams.delete('error');
+    window.history.replaceState({}, '', url.toString());
+  };
   banner.appendChild(dismiss);
-
-  const main = document.querySelector('main') || document.body;
-  main.insertBefore(banner, main.firstChild);
-};
-
-window.dismissErrorBanner = function() {
-  const banner = document.getElementById('error-banner');
-  if (banner) banner.remove();
-
-  const url = new URL(window.location.href);
-  url.searchParams.delete('error');
-  window.history.replaceState({}, '', url.toString());
-};
+}
 
 window.onTelegramAuth = function(user: TelegramUser) {
   const form = document.createElement('form');

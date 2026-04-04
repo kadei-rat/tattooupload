@@ -9,6 +9,11 @@ pub fn view(
   error: option.Option(String),
 ) -> List(Element(Nil)) {
   [
+    case error {
+      Some(msg) ->
+        html.div([attribute.class("error-banner")], [html.text(msg)])
+      None -> element.none()
+    },
     html.div([attribute.class("upload-container")], [
       html.p([], [
         html.strong([], [
@@ -19,11 +24,6 @@ pub fn view(
         ),
       ]),
       notification_hint(login_state),
-      case error {
-        Some(msg) ->
-          html.div([attribute.class("error-banner")], [html.text(msg)])
-        None -> element.none()
-      },
       upload_form(),
       instructions(),
     ]),
