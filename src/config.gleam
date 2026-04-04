@@ -22,6 +22,7 @@ pub type Config {
     telegram_bot_name: String,
     webhook_host: Option(String),
     webhook_secret: String,
+    admin_chat_id: Option(Int),
   )
 }
 
@@ -102,6 +103,11 @@ pub fn load() -> Config {
     envoy.get("WEBHOOK_SECRET")
     |> result.unwrap("")
 
+  let admin_chat_id =
+    envoy.get("ADMIN_CHAT_ID")
+    |> result.try(int.parse)
+    |> option.from_result
+
   Config(
     env: env,
     log_level: log_level,
@@ -114,5 +120,6 @@ pub fn load() -> Config {
     telegram_bot_name: telegram_bot_name,
     webhook_host: webhook_host,
     webhook_secret: webhook_secret,
+    admin_chat_id: admin_chat_id,
   )
 }

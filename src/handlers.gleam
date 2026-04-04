@@ -69,7 +69,7 @@ fn parse_float(s: String) -> Result(Float, errors.AppError) {
   |> result.map_error(fn(e) { errors.validation_error(string.inspect(e)) })
 }
 
-pub fn handle_upload(req: Request, db: DbCoordName, _conf: Config) -> Response {
+pub fn handle_upload(req: Request, db: DbCoordName, conf: Config) -> Response {
   use formdata <- wisp.require_form(req)
   let session_data = session.get_session(req) |> option.from_result
 
@@ -108,7 +108,18 @@ pub fn handle_upload(req: Request, db: DbCoordName, _conf: Config) -> Response {
       user_id,
     )
   {
-    Ok(_) -> wisp.redirect("/upload/success")
+    Ok(_) -> {
+      case conf.admin_chat_id {
+        Some(admin_chat_id) ->
+          telegram_notify.notify_upload(
+            conf.telegram_bot_token,
+            admin_chat_id,
+            session_data,
+          )
+        None -> Nil
+      }
+      wisp.redirect("/upload/success")
+    }
     Error(err) -> log_and_redirect_error("/", "Upload", err)
   }
 }
