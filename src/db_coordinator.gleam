@@ -3,11 +3,8 @@ import database
 import errors.{type AppError, public_5xx_msg}
 import gleam/erlang/process.{type Subject}
 import gleam/option.{type Option, None, Some}
-import gleam/order
 import gleam/otp/actor
 import gleam/string
-import gleam/time/duration
-import gleam/time/timestamp.{type Timestamp}
 import logging
 import models/submissions.{type ImageData, type Submission}
 import models/users.{type User}
@@ -108,7 +105,7 @@ pub fn start(
 // Private
 
 type DbPool {
-  DbPool(conn: pog.Connection, pid: process.Pid, created_at: Timestamp)
+  DbPool(conn: pog.Connection, pid: process.Pid)
 }
 
 type State {
@@ -143,7 +140,7 @@ fn run_query(
   reply_to: Subject(Result(pog.Returned(t), AppError)),
 ) -> actor.Next(State, Message) {
   case state.conn {
-    Some(_) -> execute_query_on_conn(state, query, reply_to)
+    Some(_) -> execute_query_on_conn(state, query, reply_to, False)
     None -> create_conn_and_execute_query(state, query, reply_to)
   }
 }
@@ -152,9 +149,9 @@ fn execute_query_on_conn(
   state: State,
   query: pog.Query(t),
   reply_to: Subject(Result(pog.Returned(t), AppError)),
+  is_retry: Bool,
 ) -> actor.Next(State, Message) {
-  let assert State(Some(DbPool(conn, pid, created_at)), _, _) = state
-  let now = timestamp.system_time()
+  let assert State(Some(DbPool(conn, pid)), _, _) = state
   case rescue.rescue(fn() { pog.execute(query, conn) }) {
     Error(crash) -> {
       logging.log(
@@ -166,7 +163,16 @@ fn execute_query_on_conn(
       create_conn_and_execute_query(State(..state, conn: None), query, reply_to)
     }
     Ok(Error(pog.QueryTimeout)) ->
-      handle_query_timeout(state, pid, created_at, now, reply_to, query)
+      case is_retry {
+        True -> {
+          process.send(reply_to, Error(database.to_app_error(pog.QueryTimeout)))
+          actor.continue(state)
+        }
+        False -> {
+          logging.log(logging.Warning, "Query timeout - retrying")
+          execute_query_on_conn(state, query, reply_to, True)
+        }
+      }
     Ok(Error(other_error)) -> {
       process.send(reply_to, Error(database.to_app_error(other_error)))
       actor.continue(state)
@@ -192,16 +198,11 @@ fn create_conn_and_execute_query_loop(
   reply_to: Subject(Result(pog.Returned(t), AppError)),
   attempt: Int,
 ) -> actor.Next(State, Message) {
-  let now = timestamp.system_time()
   logging.log(logging.Info, "Initialising DB connection")
   case database.connect(state.conf, state.pool_name) {
     Ok(actor.Started(pid, data)) -> {
       logging.log(logging.Info, "DB connection successful")
-      let new_state =
-        State(
-          ..state,
-          conn: Some(DbPool(conn: data, pid: pid, created_at: now)),
-        )
+      let new_state = State(..state, conn: Some(DbPool(conn: data, pid: pid)))
       case rescue.rescue(fn() { pog.execute(query, data) }) {
         Error(crash) -> {
           process.send_exit(pid)
@@ -275,29 +276,4 @@ fn is_retryable_crash(crash: rescue.Crash) -> Bool {
   && !string.contains(crash_str, "BadMatch")
   && !string.contains(crash_str, "BadArg")
   && !string.contains(crash_str, "CaseClause")
-}
-
-fn handle_query_timeout(
-  state: State,
-  pid: process.Pid,
-  created_at: Timestamp,
-  now: Timestamp,
-  reply_to: Subject(Result(pog.Returned(t), AppError)),
-  query: pog.Query(t),
-) -> actor.Next(State, Message) {
-  let conn_age = timestamp.difference(now, created_at)
-  case duration.compare(conn_age, duration.minutes(1)) {
-    order.Gt -> {
-      logging.log(
-        logging.Warning,
-        "Query timeout on connection older than 1 minute - restarting connection",
-      )
-      process.send_exit(pid)
-      create_conn_and_execute_query(state, query, reply_to)
-    }
-    _ -> {
-      process.send(reply_to, Error(database.to_app_error(pog.QueryTimeout)))
-      actor.continue(state)
-    }
-  }
 }
