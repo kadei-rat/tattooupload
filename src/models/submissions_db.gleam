@@ -1,4 +1,4 @@
-import db_coordinator.{type DbCoordName}
+import database.{type Db}
 import errors.{type AppError}
 import gleam/dynamic/decode
 import gleam/option.{type Option}
@@ -9,7 +9,7 @@ import models/submissions.{
 import pog
 
 pub fn create(
-  db: DbCoordName,
+  db: Db,
   image_data: BitArray,
   image_filename: String,
   image_content_type: String,
@@ -31,7 +31,7 @@ pub fn create(
     |> pog.parameter(pog.float(width_cm))
     |> pog.parameter(pog.nullable(pog.int, user_id))
     |> pog.returning(decode_submission())
-    |> db_coordinator.submission_query(db),
+    |> database.execute(db),
   )
 
   case rows.rows {
@@ -44,7 +44,7 @@ pub fn create(
   }
 }
 
-pub fn get_all(db: DbCoordName) -> Result(List(Submission), AppError) {
+pub fn get_all(db: Db) -> Result(List(Submission), AppError) {
   let sql =
     "
     SELECT id, image_filename, image_content_type, width_cm, user_id, status, created_at::text
@@ -55,13 +55,13 @@ pub fn get_all(db: DbCoordName) -> Result(List(Submission), AppError) {
   use rows <- result.try(
     pog.query(sql)
     |> pog.returning(decode_submission())
-    |> db_coordinator.submission_query(db),
+    |> database.execute(db),
   )
 
   Ok(rows.rows)
 }
 
-pub fn get_image_data(db: DbCoordName, id: Int) -> Result(ImageData, AppError) {
+pub fn get_image_data(db: Db, id: Int) -> Result(ImageData, AppError) {
   let sql =
     "
     SELECT image_data, image_content_type, image_filename
@@ -73,7 +73,7 @@ pub fn get_image_data(db: DbCoordName, id: Int) -> Result(ImageData, AppError) {
     pog.query(sql)
     |> pog.parameter(pog.int(id))
     |> pog.returning(decode_image_data())
-    |> db_coordinator.image_data_query(db),
+    |> database.execute(db),
   )
 
   case rows.rows {
@@ -87,9 +87,7 @@ pub fn get_image_data(db: DbCoordName, id: Int) -> Result(ImageData, AppError) {
   }
 }
 
-pub fn get_all_pending_images(
-  db: DbCoordName,
-) -> Result(List(ImageData), AppError) {
+pub fn get_all_pending_images(db: Db) -> Result(List(ImageData), AppError) {
   let sql =
     "
     SELECT image_data, image_content_type, image_filename
@@ -101,13 +99,13 @@ pub fn get_all_pending_images(
   use rows <- result.try(
     pog.query(sql)
     |> pog.returning(decode_image_data())
-    |> db_coordinator.image_data_query(db),
+    |> database.execute(db),
   )
 
   Ok(rows.rows)
 }
 
-pub fn mark_done(db: DbCoordName, id: Int) -> Result(Submission, AppError) {
+pub fn mark_done(db: Db, id: Int) -> Result(Submission, AppError) {
   let sql =
     "
     UPDATE submissions
@@ -120,7 +118,7 @@ pub fn mark_done(db: DbCoordName, id: Int) -> Result(Submission, AppError) {
     pog.query(sql)
     |> pog.parameter(pog.int(id))
     |> pog.returning(decode_submission())
-    |> db_coordinator.submission_query(db),
+    |> database.execute(db),
   )
 
   case rows.rows {

@@ -1,4 +1,4 @@
-name = "stickerupload"
+name = "tattooupload"
 version = "1.0.0"
 
 # Fill out these fields if you intend to generate HTML documentation or publish
@@ -37,4 +37,4 @@ lenient_parse = ">= 3.0.1 and < 4.0.0"
 gleeunit = ">= 1.6.1 and < 2.0.0"
 
 [erlang]
-application_start_module = "stickerupload"
+application_start_module = "tattooupload"

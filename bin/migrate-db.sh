@@ -4,7 +4,7 @@ shopt -s nullglob
 
 ./bin/teardown-db.sh
 
-DB_NAME="${DB_NAME:-stickerupload}"
+DB_NAME="${DB_NAME:-tattooupload}"
 TEST_DB_NAME="${DB_NAME}_test"
 
 setup() {

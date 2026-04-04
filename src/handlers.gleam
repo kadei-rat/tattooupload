@@ -1,5 +1,5 @@
 import config.{type Config}
-import db_coordinator.{type DbCoordName}
+import database.{type Db}
 import errors
 import frontend/admin_page as frontend_admin_page
 import frontend/layout
@@ -44,12 +44,12 @@ fn log_and_redirect_error(
 // HTML routes //
 
 pub fn static(req: Request) -> Response {
-  let assert Ok(priv) = wisp.priv_directory("stickerupload")
+  let assert Ok(priv) = wisp.priv_directory("tattooupload")
   use <- wisp.serve_static(req, under: "/static", from: priv)
   wisp.not_found()
 }
 
-pub fn upload_page(req: Request, _db: DbCoordName, conf: Config) -> Response {
+pub fn upload_page(req: Request, _db: Db, conf: Config) -> Response {
   let login_state = get_login_state(req, conf)
   let error = get_query_param(req, "error")
   layout.view(frontend_upload_page.view(login_state, error), login_state)
@@ -69,7 +69,7 @@ fn parse_float(s: String) -> Result(Float, errors.AppError) {
   |> result.map_error(fn(e) { errors.validation_error(string.inspect(e)) })
 }
 
-pub fn handle_upload(req: Request, db: DbCoordName, conf: Config) -> Response {
+pub fn handle_upload(req: Request, db: Db, conf: Config) -> Response {
   use formdata <- wisp.require_form(req)
   let session_data = session.get_session(req) |> option.from_result
 
@@ -124,7 +124,7 @@ pub fn handle_upload(req: Request, db: DbCoordName, conf: Config) -> Response {
   }
 }
 
-pub fn admin_page(req: Request, db: DbCoordName, _conf: Config) -> Response {
+pub fn admin_page(req: Request, db: Db, _conf: Config) -> Response {
   use session_data <- session.require_session(req, "/")
   use <- session.require_admin(session_data, "/")
 
@@ -147,7 +147,7 @@ pub fn admin_page(req: Request, db: DbCoordName, _conf: Config) -> Response {
 
 pub fn serve_image(
   req: Request,
-  db: DbCoordName,
+  db: Db,
   _conf: Config,
   id_str: String,
 ) -> Response {
@@ -186,11 +186,7 @@ pub fn serve_image(
   }
 }
 
-pub fn download_all_pending(
-  req: Request,
-  db: DbCoordName,
-  _conf: Config,
-) -> Response {
+pub fn download_all_pending(req: Request, db: Db, _conf: Config) -> Response {
   use session_data <- session.require_session(req, "/")
   use <- session.require_admin(session_data, "/")
 
@@ -221,12 +217,7 @@ pub fn download_all_pending(
 @external(erlang, "zip_ffi", "create")
 fn zip_create(files: List(#(String, BitArray))) -> Result(BitArray, String)
 
-pub fn mark_done(
-  req: Request,
-  db: DbCoordName,
-  conf: Config,
-  id_str: String,
-) -> Response {
+pub fn mark_done(req: Request, db: Db, conf: Config, id_str: String) -> Response {
   use session_data <- session.require_session(req, "/")
   use <- session.require_admin(session_data, "/")
 
@@ -265,7 +256,7 @@ pub fn auth_status(req: Request, _conf: Config) -> Response {
   }
 }
 
-pub fn login(req: Request, db: DbCoordName, conf: Config) -> Response {
+pub fn login(req: Request, db: Db, conf: Config) -> Response {
   use formdata <- wisp.require_form(req)
 
   let return_url =
@@ -283,11 +274,7 @@ pub fn logout(req: Request) -> Response {
   session.destroy_session(wisp.redirect("/"), req)
 }
 
-fn handle_dev_login(
-  req: Request,
-  db: DbCoordName,
-  return_url: String,
-) -> Response {
+fn handle_dev_login(req: Request, db: Db, return_url: String) -> Response {
   let login_data =
     telegram_auth.TelegramLoginData(
       id: 1,
@@ -306,7 +293,7 @@ fn handle_dev_login(
 
 fn handle_telegram_login(
   req: Request,
-  db: DbCoordName,
+  db: Db,
   conf: Config,
   formdata: wisp.FormData,
   return_url: String,

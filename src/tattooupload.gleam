@@ -1,10 +1,9 @@
 import config
-import db_coordinator
+import database
 import gleam/erlang/process
 import gleam/option.{None, Some}
 import gleam/otp/actor
 import gleam/otp/static_supervisor as supervisor
-import gleam/otp/supervision
 import logging
 import mist
 import router
@@ -26,17 +25,14 @@ pub fn start(_app, _type) -> Result(process.Pid, actor.StartError) {
 
   logging.log(logging.Info, "Starting top-level supervisor")
 
-  let db_coord_name = process.new_name(prefix: "db_coordinator")
-
-  let db_worker =
-    supervision.worker(fn() { db_coordinator.start(conf, db_coord_name) })
+  let assert Ok(db) = database.start(conf)
 
   let bot_enabled = conf.telegram_bot_token != ""
   let webhook_enabled = option.is_some(conf.webhook_host)
 
   let bot = case bot_enabled, webhook_enabled {
     True, True -> {
-      case telegram_bot.start(conf, db_coord_name) {
+      case telegram_bot.start(conf, db) {
         Ok(bot) -> {
           logging.log(logging.Info, "Telegram bot started with webhooks")
           Some(bot)
@@ -67,7 +63,7 @@ pub fn start(_app, _type) -> Result(process.Pid, actor.StartError) {
 
   let web_server =
     wisp_mist.handler(
-      router.handle_request(_, db_coord_name, conf, bot),
+      router.handle_request(_, db, conf, bot),
       conf.secret_key_base,
     )
     |> mist.new
@@ -77,7 +73,6 @@ pub fn start(_app, _type) -> Result(process.Pid, actor.StartError) {
 
   let sup =
     supervisor.new(supervisor.OneForOne)
-    |> supervisor.add(db_worker)
     |> supervisor.add(web_server)
 
   case supervisor.start(sup) {

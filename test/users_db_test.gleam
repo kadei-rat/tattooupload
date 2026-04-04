@@ -1,4 +1,4 @@
-import db_coordinator
+import database
 import gleam/option.{None, Some}
 import models/users_db
 import pog
@@ -58,6 +58,6 @@ fn cleanup_test_user(db, user_id: Int) {
     pog.query("DELETE FROM users WHERE id = $1")
     |> pog.parameter(pog.int(user_id))
 
-  let _ = db_coordinator.noresult_query(query, db)
+  let _ = database.execute(query, db)
   Nil
 }

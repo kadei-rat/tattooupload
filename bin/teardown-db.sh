@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-DB_NAME="${DB_NAME:-stickerupload}"
+DB_NAME="${DB_NAME:-tattooupload}"
 TEST_DB_NAME="${DB_NAME}_test"
 
 echo "WARNING: This will permanently delete the dev and test databases! Are you sure?"

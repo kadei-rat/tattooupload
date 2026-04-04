@@ -1,4 +1,4 @@
-import db_coordinator.{type DbCoordName}
+import database.{type Db}
 import errors.{type AppError}
 import gleam/dynamic/decode
 import gleam/option
@@ -8,7 +8,7 @@ import models/users.{type User, User}
 import pog
 import telegram_auth.{type TelegramLoginData}
 
-pub fn get_all(db: DbCoordName) -> Result(List(User), AppError) {
+pub fn get_all(db: Db) -> Result(List(User), AppError) {
   let sql =
     "
     SELECT id, first_name, last_name, username, photo_url, role, ban
@@ -19,13 +19,13 @@ pub fn get_all(db: DbCoordName) -> Result(List(User), AppError) {
   use rows <- result.try(
     pog.query(sql)
     |> pog.returning(decode_user())
-    |> db_coordinator.user_query(db),
+    |> database.execute(db),
   )
 
   Ok(rows.rows)
 }
 
-pub fn get_by_id(db: DbCoordName, id: Int) -> Result(User, AppError) {
+pub fn get_by_id(db: Db, id: Int) -> Result(User, AppError) {
   let sql =
     "
     SELECT id, first_name, last_name, username, photo_url, role, ban
@@ -37,7 +37,7 @@ pub fn get_by_id(db: DbCoordName, id: Int) -> Result(User, AppError) {
     pog.query(sql)
     |> pog.parameter(pog.int(id))
     |> pog.returning(decode_user())
-    |> db_coordinator.user_query(db),
+    |> database.execute(db),
   )
 
   case rows.rows {
@@ -52,7 +52,7 @@ pub fn get_by_id(db: DbCoordName, id: Int) -> Result(User, AppError) {
 }
 
 pub fn create_or_update(
-  db: DbCoordName,
+  db: Db,
   login_data: TelegramLoginData,
 ) -> Result(User, AppError) {
   let sql =
@@ -76,7 +76,7 @@ pub fn create_or_update(
     |> pog.parameter(pog.nullable(pog.text, login_data.username))
     |> pog.parameter(pog.nullable(pog.text, login_data.photo_url))
     |> pog.returning(decode_user())
-    |> db_coordinator.user_query(db),
+    |> database.execute(db),
   )
 
   case rows.rows {
@@ -94,11 +94,7 @@ pub fn create_or_update(
   }
 }
 
-pub fn ban_user(
-  db: DbCoordName,
-  user_id: Int,
-  reason: String,
-) -> Result(Nil, AppError) {
+pub fn ban_user(db: Db, user_id: Int, reason: String) -> Result(Nil, AppError) {
   let sql =
     "
     UPDATE users
@@ -110,13 +106,13 @@ pub fn ban_user(
     pog.query(sql)
     |> pog.parameter(pog.int(user_id))
     |> pog.parameter(pog.text(reason))
-    |> db_coordinator.noresult_query(db),
+    |> database.execute(db),
   )
 
   Ok(Nil)
 }
 
-pub fn unban_user(db: DbCoordName, user_id: Int) -> Result(Nil, AppError) {
+pub fn unban_user(db: Db, user_id: Int) -> Result(Nil, AppError) {
   let sql =
     "
     UPDATE users
@@ -127,7 +123,7 @@ pub fn unban_user(db: DbCoordName, user_id: Int) -> Result(Nil, AppError) {
   use _ <- result.try(
     pog.query(sql)
     |> pog.parameter(pog.int(user_id))
-    |> db_coordinator.noresult_query(db),
+    |> database.execute(db),
   )
 
   Ok(Nil)

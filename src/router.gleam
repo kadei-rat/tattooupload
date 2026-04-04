@@ -1,5 +1,5 @@
 import config
-import db_coordinator.{type DbCoordName}
+import database.{type Db}
 import gleam/http.{Get, Post}
 import gleam/http/request
 import gleam/json
@@ -12,7 +12,7 @@ import wisp.{type Request, type Response}
 
 pub fn handle_request(
   req: Request,
-  db: DbCoordName,
+  db: Db,
   conf: config.Config,
   bot: Option(telega.Telega(Nil, Nil)),
 ) -> Response {

@@ -1,5 +1,5 @@
 import config.{type Config}
-import db_coordinator.{type DbCoordName}
+import database.{type Db}
 import gleam/option.{Some}
 import gleam/result
 import telega
@@ -10,7 +10,7 @@ import telega/router
 import telega/update
 import telega_httpc
 
-fn build_router(_db: DbCoordName, _conf: Config) {
+fn build_router(_db: Db, _conf: Config) {
   router.new("app_bot")
   |> router.fallback(handle_fallback)
 }
@@ -24,7 +24,7 @@ fn handle_fallback(
 
 pub fn start(
   conf: Config,
-  db: DbCoordName,
+  db: Db,
 ) -> Result(telega.Telega(Nil, Nil), TelegaError) {
   let assert Some(webhook_host) = conf.webhook_host
   telega.new(
