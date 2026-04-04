@@ -45,11 +45,9 @@ pub fn start(
   db: DbCoordName,
 ) -> Result(telega.Telega(Nil, Nil), TelegaError) {
   let assert Some(webhook_host) = conf.webhook_host
-  let webhook_url = webhook_host <> "/telegram/webhook"
-
   telega.new(
     api_client: telega_httpc.new(token: conf.telegram_bot_token),
-    url: webhook_url,
+    url: webhook_host,
     webhook_path: "telegram/webhook",
     secret_token: Some(conf.webhook_secret),
   )
