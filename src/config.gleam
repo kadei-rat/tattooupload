@@ -16,6 +16,8 @@ pub type Config {
     db_url: String,
     db_name_suffix: String,
     db_pool_size: Int,
+    db_query_timeout: Int,
+    db_query_max_attempts: Int,
     server_port: Int,
     secret_key_base: String,
     telegram_bot_token: String,
@@ -72,6 +74,16 @@ pub fn load() -> Config {
     |> result.try(int.parse)
     |> result.unwrap(5)
 
+  let db_query_timeout =
+    envoy.get("DB_QUERY_TIMEOUT")
+    |> result.try(int.parse)
+    |> result.unwrap(10_000)
+
+  let db_query_max_attempts =
+    envoy.get("DB_QUERY_MAX_ATTEMPTS")
+    |> result.try(int.parse)
+    |> result.unwrap(3)
+
   let server_port =
     envoy.get("PORT")
     |> result.try(int.parse)
@@ -114,6 +126,8 @@ pub fn load() -> Config {
     db_url: db_url,
     db_name_suffix: db_name_suffix,
     db_pool_size: db_pool_size,
+    db_query_timeout: db_query_timeout,
+    db_query_max_attempts: db_query_max_attempts,
     server_port: server_port,
     secret_key_base: secret_key_base,
     telegram_bot_token: telegram_bot_token,

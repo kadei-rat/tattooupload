@@ -3,7 +3,7 @@ import database.{type Db}
 import errors.{type AppError}
 import gleam/string
 import global_value
-import pog
+import postgleam
 
 pub fn setup_test_db() -> Result(Db, AppError) {
   use <- global_value.create_with_unique_name("test_db")
@@ -23,8 +23,8 @@ pub fn setup_test_db() -> Result(Db, AppError) {
 
 pub fn cleanup_by_id(db: Db, table: String, id: Int) {
   let query =
-    pog.query("DELETE FROM " <> table <> " WHERE id = $1")
-    |> pog.parameter(pog.int(id))
+    database.query("DELETE FROM " <> table <> " WHERE id = $1")
+    |> database.parameter(postgleam.int(id))
 
   let _ = database.execute(query, db)
   Nil

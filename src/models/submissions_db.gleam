@@ -1,12 +1,13 @@
 import database.{type Db}
 import errors.{type AppError}
-import gleam/dynamic/decode
+import gleam/float
 import gleam/option.{type Option}
 import gleam/result
 import models/submissions.{
   type ImageData, type Submission, ImageData, Submission,
 }
-import pog
+import postgleam
+import postgleam/decode as pg_decode
 
 pub fn create(
   db: Db,
@@ -24,13 +25,13 @@ pub fn create(
   "
 
   use rows <- result.try(
-    pog.query(sql)
-    |> pog.parameter(pog.bytea(image_data))
-    |> pog.parameter(pog.text(image_filename))
-    |> pog.parameter(pog.text(image_content_type))
-    |> pog.parameter(pog.float(width_cm))
-    |> pog.parameter(pog.nullable(pog.int, user_id))
-    |> pog.returning(decode_submission())
+    database.query(sql)
+    |> database.parameter(postgleam.bytea(image_data))
+    |> database.parameter(postgleam.text(image_filename))
+    |> database.parameter(postgleam.text(image_content_type))
+    |> database.parameter(postgleam.numeric(float.to_string(width_cm)))
+    |> database.parameter(postgleam.nullable(user_id, postgleam.int))
+    |> database.returning(decode_submission())
     |> database.execute(db),
   )
 
@@ -53,8 +54,8 @@ pub fn get_all(db: Db) -> Result(List(Submission), AppError) {
   "
 
   use rows <- result.try(
-    pog.query(sql)
-    |> pog.returning(decode_submission())
+    database.query(sql)
+    |> database.returning(decode_submission())
     |> database.execute(db),
   )
 
@@ -70,9 +71,9 @@ pub fn get_image_data(db: Db, id: Int) -> Result(ImageData, AppError) {
   "
 
   use rows <- result.try(
-    pog.query(sql)
-    |> pog.parameter(pog.int(id))
-    |> pog.returning(decode_image_data())
+    database.query(sql)
+    |> database.parameter(postgleam.int(id))
+    |> database.returning(decode_image_data())
     |> database.execute(db),
   )
 
@@ -97,8 +98,8 @@ pub fn get_all_pending_images(db: Db) -> Result(List(ImageData), AppError) {
   "
 
   use rows <- result.try(
-    pog.query(sql)
-    |> pog.returning(decode_image_data())
+    database.query(sql)
+    |> database.returning(decode_image_data())
     |> database.execute(db),
   )
 
@@ -115,9 +116,9 @@ pub fn mark_done(db: Db, id: Int) -> Result(Submission, AppError) {
   "
 
   use rows <- result.try(
-    pog.query(sql)
-    |> pog.parameter(pog.int(id))
-    |> pog.returning(decode_submission())
+    database.query(sql)
+    |> database.parameter(postgleam.int(id))
+    |> database.returning(decode_submission())
     |> database.execute(db),
   )
 
@@ -132,16 +133,18 @@ pub fn mark_done(db: Db, id: Int) -> Result(Submission, AppError) {
   }
 }
 
-fn decode_submission() -> decode.Decoder(Submission) {
-  use id <- decode.field("id", decode.int)
-  use image_filename <- decode.field("image_filename", decode.string)
-  use image_content_type <- decode.field("image_content_type", decode.string)
-  use width_cm <- decode.field("width_cm", pog.numeric_decoder())
-  use user_id <- decode.field("user_id", decode.optional(decode.int))
-  use status <- decode.field("status", decode.string)
-  use created_at <- decode.field("created_at", decode.string)
+fn decode_submission() -> pg_decode.RowDecoder(Submission) {
+  use id <- pg_decode.element(0, pg_decode.int)
+  use image_filename <- pg_decode.element(1, pg_decode.text)
+  use image_content_type <- pg_decode.element(2, pg_decode.text)
+  use width_cm_str <- pg_decode.element(3, pg_decode.numeric)
+  use user_id <- pg_decode.element(4, pg_decode.optional(pg_decode.int))
+  use status <- pg_decode.element(5, pg_decode.text)
+  use created_at <- pg_decode.element(6, pg_decode.text)
 
-  decode.success(Submission(
+  let width_cm = float.parse(width_cm_str) |> result.unwrap(0.0)
+
+  pg_decode.success(Submission(
     id: id,
     image_filename: image_filename,
     image_content_type: image_content_type,
@@ -152,12 +155,12 @@ fn decode_submission() -> decode.Decoder(Submission) {
   ))
 }
 
-fn decode_image_data() -> decode.Decoder(ImageData) {
-  use data <- decode.field("image_data", decode.bit_array)
-  use content_type <- decode.field("image_content_type", decode.string)
-  use filename <- decode.field("image_filename", decode.string)
+fn decode_image_data() -> pg_decode.RowDecoder(ImageData) {
+  use data <- pg_decode.element(0, pg_decode.bytea)
+  use content_type <- pg_decode.element(1, pg_decode.text)
+  use filename <- pg_decode.element(2, pg_decode.text)
 
-  decode.success(ImageData(
+  pg_decode.success(ImageData(
     data: data,
     content_type: content_type,
     filename: filename,

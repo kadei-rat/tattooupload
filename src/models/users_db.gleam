@@ -1,11 +1,11 @@
 import database.{type Db}
 import errors.{type AppError}
-import gleam/dynamic/decode
 import gleam/option
 import gleam/result
 import models/role
 import models/users.{type User, User}
-import pog
+import postgleam
+import postgleam/decode as pg_decode
 import telegram_auth.{type TelegramLoginData}
 
 pub fn get_all(db: Db) -> Result(List(User), AppError) {
@@ -17,8 +17,8 @@ pub fn get_all(db: Db) -> Result(List(User), AppError) {
   "
 
   use rows <- result.try(
-    pog.query(sql)
-    |> pog.returning(decode_user())
+    database.query(sql)
+    |> database.returning(decode_user())
     |> database.execute(db),
   )
 
@@ -34,9 +34,9 @@ pub fn get_by_id(db: Db, id: Int) -> Result(User, AppError) {
   "
 
   use rows <- result.try(
-    pog.query(sql)
-    |> pog.parameter(pog.int(id))
-    |> pog.returning(decode_user())
+    database.query(sql)
+    |> database.parameter(postgleam.int(id))
+    |> database.returning(decode_user())
     |> database.execute(db),
   )
 
@@ -69,13 +69,21 @@ pub fn create_or_update(
   "
 
   use rows <- result.try(
-    pog.query(sql)
-    |> pog.parameter(pog.int(login_data.id))
-    |> pog.parameter(pog.text(login_data.first_name))
-    |> pog.parameter(pog.text(option.unwrap(login_data.last_name, "")))
-    |> pog.parameter(pog.nullable(pog.text, login_data.username))
-    |> pog.parameter(pog.nullable(pog.text, login_data.photo_url))
-    |> pog.returning(decode_user())
+    database.query(sql)
+    |> database.parameter(postgleam.int(login_data.id))
+    |> database.parameter(postgleam.text(login_data.first_name))
+    |> database.parameter(
+      postgleam.text(option.unwrap(login_data.last_name, "")),
+    )
+    |> database.parameter(postgleam.nullable(
+      login_data.username,
+      postgleam.text,
+    ))
+    |> database.parameter(postgleam.nullable(
+      login_data.photo_url,
+      postgleam.text,
+    ))
+    |> database.returning(decode_user())
     |> database.execute(db),
   )
 
@@ -103,9 +111,9 @@ pub fn ban_user(db: Db, user_id: Int, reason: String) -> Result(Nil, AppError) {
   "
 
   use _ <- result.try(
-    pog.query(sql)
-    |> pog.parameter(pog.int(user_id))
-    |> pog.parameter(pog.text(reason))
+    database.query(sql)
+    |> database.parameter(postgleam.int(user_id))
+    |> database.parameter(postgleam.text(reason))
     |> database.execute(db),
   )
 
@@ -121,24 +129,24 @@ pub fn unban_user(db: Db, user_id: Int) -> Result(Nil, AppError) {
   "
 
   use _ <- result.try(
-    pog.query(sql)
-    |> pog.parameter(pog.int(user_id))
+    database.query(sql)
+    |> database.parameter(postgleam.int(user_id))
     |> database.execute(db),
   )
 
   Ok(Nil)
 }
 
-fn decode_user() -> decode.Decoder(User) {
-  use id <- decode.field("id", decode.int)
-  use first_name <- decode.field("first_name", decode.string)
-  use last_name <- decode.field("last_name", decode.string)
-  use username <- decode.field("username", decode.optional(decode.string))
-  use photo_url <- decode.field("photo_url", decode.optional(decode.string))
-  use role_str <- decode.field("role", decode.string)
-  use ban <- decode.field("ban", decode.optional(decode.string))
+fn decode_user() -> pg_decode.RowDecoder(User) {
+  use id <- pg_decode.element(0, pg_decode.int)
+  use first_name <- pg_decode.element(1, pg_decode.text)
+  use last_name <- pg_decode.element(2, pg_decode.text)
+  use username <- pg_decode.element(3, pg_decode.optional(pg_decode.text))
+  use photo_url <- pg_decode.element(4, pg_decode.optional(pg_decode.text))
+  use role_str <- pg_decode.element(5, pg_decode.text)
+  use ban <- pg_decode.element(6, pg_decode.optional(pg_decode.text))
 
-  decode.success(User(
+  pg_decode.success(User(
     id: id,
     first_name: first_name,
     last_name: last_name,
