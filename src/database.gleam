@@ -45,7 +45,7 @@ pub fn start(conf: Config) -> Result(Db, String) {
       ))
     }
     Error(err) -> {
-      logging.log(logging.Warning, "DB connection failed: " <> err)
+      logging.log(logging.Error, "DB connection failed: " <> err)
       Error(err)
     }
   }
