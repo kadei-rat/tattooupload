@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "build": "tsc --noEmit && esbuild ts/app.ts --bundle --outfile=priv/app.js",
+    "build": "tsc --noEmit && esbuild ts/app.ts --bundle --outfile=priv/app.js && node scripts/update-hashes.js",
     "watch": "esbuild ts/app.ts --bundle --outfile=priv/app.js --watch",
     "typecheck": "tsc --noEmit"
   },

@@ -4,9 +4,9 @@ import lustre/attribute
 import lustre/element.{type Element}
 import lustre/element/html
 
-const js_hash = "fillmein"
+const js_hash = "e8af5244"
 
-const css_hash = "fillmein"
+const css_hash = "d7ea5e3c"
 
 pub fn view(
   elements: List(Element(Nil)),
