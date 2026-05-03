@@ -75,6 +75,7 @@ fn make_config(conf: Config) -> pg_config.Config {
   |> pg_config.ssl(ssl)
   |> pg_config.idle_interval(1000)
   |> pg_config.queue_timeout(5000)
+  |> pg_config.aggressive_reconnect(True)
 }
 
 fn parse_userinfo(userinfo: Option(String)) -> Result(#(String, String), Nil) {
