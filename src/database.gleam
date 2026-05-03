@@ -183,8 +183,7 @@ fn execute_with_logging(
   q: Query(t),
   db: Db,
 ) -> Result(Result(Returned(t), pg_error.Error), rescue.Crash) {
-  let query_str =
-    "Query(" <> string.inspect(q.sql) <> ", " <> string.inspect(q.params) <> ")"
+  let query_str = "Query(" <> string.inspect(q.sql) <> ")"
   logging.log(logging.Debug, "DB query: " <> query_str)
   let start = timestamp.system_time()
 
