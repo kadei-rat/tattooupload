@@ -6,6 +6,10 @@ COPY . /app/
 RUN cd /app && gleam export erlang-shipment
 
 FROM erlang:28.2-alpine
+RUN apk add --no-cache ca-certificates wget && \
+  wget -O /usr/local/share/ca-certificates/aws-rds-global-bundle.crt \
+    https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem && \
+  update-ca-certificates
 RUN \
   addgroup --system webapp && \
   adduser --system webapp -g webapp
