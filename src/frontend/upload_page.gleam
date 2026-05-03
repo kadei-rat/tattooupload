@@ -13,6 +13,7 @@ pub fn view(
       Some(msg) -> html.div([attribute.class("error-banner")], [html.text(msg)])
       None -> element.none()
     },
+    dev_login_form(login_state),
     html.div([attribute.class("upload-container")], [
       html.p([], [
         html.strong([], [
@@ -22,8 +23,7 @@ pub fn view(
           "When it's done, pick it up from Kadei at the Furry High Commission.",
         ),
       ]),
-      notification_hint(login_state),
-      upload_form(),
+      upload_form(login_state),
       instructions(),
     ]),
   ]
@@ -63,7 +63,11 @@ fn instructions() -> Element(Nil) {
   ])
 }
 
-fn upload_form() -> Element(Nil) {
+fn upload_form(login_state: LoginState) -> Element(Nil) {
+  let logged_in = case login_state {
+    LoggedIn(_) -> True
+    LoggedOut(_, _, _) -> False
+  }
   html.form(
     [
       attribute.action("/upload"),
@@ -104,14 +108,27 @@ fn upload_form() -> Element(Nil) {
           attribute.attribute("required", ""),
         ]),
       ]),
-      html.button([attribute.type_("submit"), attribute.class("submit-btn")], [
-        html.text("Upload"),
-      ]),
+      login_section(login_state),
+      html.button(
+        [
+          attribute.type_("submit"),
+          attribute.class("submit-btn"),
+          attribute.disabled(!logged_in),
+        ],
+        [html.text("Upload")],
+      ),
+      case logged_in {
+        True -> element.none()
+        False ->
+          html.p([attribute.class("submit-help")], [
+            html.text("Please log in before uploading an image"),
+          ])
+      },
     ],
   )
 }
 
-fn notification_hint(login_state: LoginState) -> Element(Nil) {
+fn login_section(login_state: LoginState) -> Element(Nil) {
   case login_state {
     LoggedIn(user) ->
       html.p([attribute.class("notification-hint")], [
@@ -125,39 +142,28 @@ fn notification_hint(login_state: LoginState) -> Element(Nil) {
         ),
       ])
     LoggedOut(bot_name, dev_mode, return_url) ->
-      html.div([attribute.class("notification-hint")], [
-        html.text(
-          "Want to be notified when your tattoo is printed? Log in to get a Telegram notification: ",
-        ),
+      html.div([attribute.class("form-group login-prompt")], [
+        html.p([attribute.class("notification-hint")], [
+          html.text(
+            "Log in with Telegram to upload — we'll notify you on Telegram when your tattoo is ready.",
+          ),
+        ]),
         case dev_mode {
           True ->
-            html.form(
+            html.button(
               [
-                attribute.action("/login"),
-                attribute.method("post"),
-                attribute.style("display", "inline"),
+                attribute.type_("submit"),
+                attribute.attribute("form", "dev-login-form"),
+                attribute.class("inline-login-btn"),
               ],
-              [
-                html.input([
-                  attribute.type_("hidden"),
-                  attribute.name("return_url"),
-                  attribute.value(return_url),
-                ]),
-                html.button(
-                  [
-                    attribute.type_("submit"),
-                    attribute.class("inline-login-btn"),
-                  ],
-                  [html.text("Log in")],
-                ),
-              ],
+              [html.text("Log in (dev)")],
             )
           False ->
             html.div(
               [
                 attribute.id("telegram-login"),
                 attribute.attribute("data-telegram-login", bot_name),
-                attribute.attribute("data-size", "small"),
+                attribute.attribute("data-size", "medium"),
                 attribute.attribute("data-radius", "5"),
                 attribute.attribute("data-request-access", "write"),
                 attribute.attribute("data-return-url", return_url),
@@ -166,5 +172,26 @@ fn notification_hint(login_state: LoginState) -> Element(Nil) {
             )
         },
       ])
+  }
+}
+
+fn dev_login_form(login_state: LoginState) -> Element(Nil) {
+  case login_state {
+    LoggedOut(_, True, return_url) ->
+      html.form(
+        [
+          attribute.id("dev-login-form"),
+          attribute.action("/login"),
+          attribute.method("post"),
+        ],
+        [
+          html.input([
+            attribute.type_("hidden"),
+            attribute.name("return_url"),
+            attribute.value(return_url),
+          ]),
+        ],
+      )
+    _ -> element.none()
   }
 }

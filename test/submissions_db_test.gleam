@@ -10,14 +10,7 @@ pub fn create_submission_with_image_test() {
   let assert Ok(image_data) = simplifile.read_bits("test/test.png")
 
   let assert Ok(submission) =
-    submissions_db.create(
-      db,
-      image_data,
-      "test.png",
-      "image/png",
-      5.0,
-      None,
-    )
+    submissions_db.create(db, image_data, "test.png", "image/png", 5.0, None)
 
   cleanup_submission(db, submission.id)
 }
