@@ -60,10 +60,7 @@ fn make_config(conf: Config) -> pg_config.Config {
     uri.path
     |> string.drop_start(1)
 
-  let ssl = case conf.env {
-    config.Prod -> pg_config.SslUnverified
-    config.Dev -> pg_config.SslDisabled
-  }
+  let ssl = parse_ssl_mode(uri.query)
 
   pg_config.default()
   |> pg_config.host(host)
@@ -76,6 +73,23 @@ fn make_config(conf: Config) -> pg_config.Config {
   |> pg_config.idle_interval(1000)
   |> pg_config.queue_timeout(5000)
   |> pg_config.aggressive_reconnect(True)
+}
+
+fn parse_ssl_mode(query: Option(String)) -> pg_config.SslMode {
+  let sslmode =
+    query
+    |> option.then(fn(q) { uri.parse_query(q) |> option.from_result })
+    |> option.then(fn(params) {
+      list.key_find(params, "sslmode") |> option.from_result
+    })
+  case sslmode {
+    option.Some("disable") -> pg_config.SslDisabled
+    option.Some("require") -> pg_config.SslUnverified
+    option.Some("verify-ca") -> pg_config.SslVerified
+    option.Some("verify-full") -> pg_config.SslVerified
+    option.Some(other) -> panic as { "Unsupported sslmode: " <> other }
+    option.None -> panic as "DATABASE_URL must include ?sslmode=..."
+  }
 }
 
 fn parse_userinfo(userinfo: Option(String)) -> Result(#(String, String), Nil) {
