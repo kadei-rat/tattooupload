@@ -2,29 +2,45 @@
   box-sizing: border-box;
 }
 
+/* Raleway variable font (EMF's heading face), self-hosted */
+@font-face {
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/static/fonts/raleway-latin.woff2") format("woff2");
+}
+
 :root {
-  --color-bg: #faf7f2;
-  --color-surface: #ffffff;
-  --color-surface-hover: #f0ebe3;
-  --color-primary: #e07850;
-  --color-primary-hover: #c9643e;
-  --color-text: #3d3531;
-  --color-text-muted: #8a7e76;
-  --color-border: #e2dbd3;
-  --color-success: #3ba55d;
-  --color-warning: #e5a030;
-  --color-error: #d94040;
+  color-scheme: dark;
 
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  /* EMF 2026 palette: #0f0f0f ground, yellow→orange→coral brand gradient */
+  --color-bg: #0f0f0f;
+  --color-panel: #191919;
+  --color-edge: #2a2a2a;
+  --color-text: #e8e5df;
+  --color-muted: #a09a91;
 
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.08);
+  --color-yellow: #f9e200;
+  --color-orange: #f77f02;
+  --color-coral: #f5515e;
+  --color-green: #2ae28c;
+  --rainbow: linear-gradient(90deg, #f9e200 0%, #f77f02 50%, #f5515e 100%);
+
+  /* the transfer sheet */
+  --sheet: #343434;
+  --sheet-ink: #f0ede6;
+  --sheet-label: #aaa398;
+  --sheet-edge: #4e4e4e;
+  --sheet-link: var(--color-orange);
+
+  --font-display: "Raleway", "Helvetica Neue", Arial, sans-serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "JetBrains Mono", "Fira Code", "Cascadia Code", Menlo, Consolas, monospace;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-body);
   background-color: var(--color-bg);
   color: var(--color-text);
   margin: 0;
@@ -32,20 +48,36 @@ body {
   line-height: 1.6;
 }
 
+::selection {
+  background: var(--color-orange);
+  color: var(--color-bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-orange);
+  outline-offset: 2px;
+}
+
 a {
-  color: var(--color-primary);
+  color: var(--color-orange);
   text-decoration: none;
 }
 
 a:hover {
-  color: var(--color-primary-hover);
+  color: var(--color-coral);
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  color: #fff;
 }
 
 /* Header */
 .site-header {
-  background-color: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-  padding: 0.75rem 1.5rem;
+  background-color: var(--color-bg);
+  border-bottom: 3px solid;
+  border-image: var(--rainbow) 1;
+  padding: 0.85rem 1.5rem;
 }
 
 .header-content {
@@ -57,13 +89,19 @@ a:hover {
 }
 
 .site-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  background-image: var(--rainbow);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .site-title:hover {
-  color: var(--color-primary-hover);
+  filter: brightness(1.2);
 }
 
 .header-right {
@@ -88,11 +126,12 @@ a:hover {
   width: 28px;
   height: 28px;
   border-radius: 50%;
+  border: 1px solid var(--color-edge);
 }
 
 .user-name {
   font-size: 0.875rem;
-  color: var(--color-text-muted);
+  color: var(--color-muted);
 }
 
 .user-actions {
@@ -102,26 +141,27 @@ a:hover {
 }
 
 .header-link {
-  font-size: 0.875rem;
-  color: var(--color-primary);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--color-orange);
 }
 
 .logout-form {
   display: inline;
 }
 
-.logout-btn, .dev-login-btn {
+.logout-btn {
   background: none;
-  border: 1px solid var(--color-border);
-  color: var(--color-text-muted);
+  border: 1px solid #3a3a3a;
+  color: var(--color-muted);
   padding: 0.375rem 0.75rem;
-  border-radius: var(--radius-sm);
+  border-radius: 4px;
   cursor: pointer;
   font-size: 0.8125rem;
 }
 
-.logout-btn:hover, .dev-login-btn:hover {
-  border-color: var(--color-primary);
+.logout-btn:hover {
+  border-color: var(--color-orange);
   color: var(--color-text);
 }
 
@@ -129,130 +169,176 @@ a:hover {
 main {
   max-width: 900px;
   margin: 0 auto;
-  padding: 2rem 1.5rem;
+  padding: 2rem 1.5rem 4rem;
 }
 
 /* Error banner */
 .error-banner {
-  background-color: var(--color-error);
-  color: white;
+  background-color: var(--color-coral);
+  color: #16090a;
+  font-weight: 500;
   padding: 0.75rem 1rem;
-  border-radius: var(--radius-md);
+  border-radius: 4px;
   margin-bottom: 1.5rem;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
 }
 
+.error-banner-dismiss {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0.25rem;
+}
+
 /* Upload page */
 .upload-container h1 {
-  margin-top: 0;
+  font-weight: 800;
+  font-size: clamp(1.6rem, 4.5vw, 2.3rem);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin: 1rem 0 0.5rem;
 }
 
-.instructions {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: 1.25rem 1.5rem;
-  margin-bottom: 2rem;
+.lede {
+  color: var(--color-muted);
+  font-size: 1.05rem;
+  margin: 0 0 2rem;
 }
 
-.instructions h2 {
-  margin-top: 0;
-  font-size: 1.1rem;
-  color: var(--color-text);
-}
-
-.instructions ul {
-  margin: 0;
-  padding-left: 1.25rem;
-}
-
-.instructions li {
-  margin-bottom: 0.5rem;
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
-}
-
-/* Upload form */
+/* Upload form: the tattoo transfer sheet, raised off the page ground.
+   Dashed inset border is the cut line. */
 .upload-form {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
+  position: relative;
+  background-color: var(--sheet);
+  color: var(--sheet-ink);
+  padding: 2.5rem 2.25rem 1.75rem;
+  margin-bottom: 1.75rem;
+  border-radius: 3px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+}
+
+.upload-form::before {
+  content: "";
+  position: absolute;
+  inset: 11px;
+  border: 1.5px dashed #757067;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.upload-form::after {
+  content: "\2702\FE0E";
+  position: absolute;
+  top: 11px;
+  left: 2.75rem;
+  transform: translateY(-54%);
+  font-size: 1rem;
+  line-height: 1;
+  color: #9a948a;
+  background-color: var(--sheet);
+  padding: 0 5px;
 }
 
 .form-group {
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  font-weight: 500;
-  font-size: 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--sheet-label);
 }
 
 .form-group input[type="file"] {
   display: block;
   width: 100%;
-  padding: 0.625rem;
-  background-color: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  color: var(--color-text);
+  padding: 0.55rem;
+  background-color: #2a2a2a;
+  border: 1px solid var(--sheet-edge);
+  border-radius: 4px;
+  color: var(--sheet-ink);
   font-size: 0.875rem;
+}
+
+.form-group input[type="file"]::file-selector-button {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: var(--sheet-ink);
+  color: var(--sheet);
+  border: none;
+  border-radius: 3px;
+  padding: 0.5rem 0.9rem;
+  margin-right: 0.9rem;
+  cursor: pointer;
 }
 
 .form-group input[type="number"] {
   width: 120px;
-  padding: 0.625rem;
-  background-color: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  color: var(--color-text);
+  padding: 0.55rem;
+  background-color: #2a2a2a;
+  border: 1px solid var(--sheet-edge);
+  border-radius: 4px;
+  color: var(--sheet-ink);
   font-size: 0.875rem;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(224, 120, 80, 0.25);
+  border-color: var(--color-orange);
+  box-shadow: 0 0 0 2px rgba(247, 127, 2, 0.3);
 }
 
-.submit-btn {
-  background-color: var(--color-primary);
-  color: white;
+.submit-btn,
+.upload-another-btn {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #0f0f0f;
+  background-image: var(--rainbow);
+  background-size: 160% 100%;
+  background-position: 0 0;
   border: none;
-  padding: 0.75rem 2rem;
-  border-radius: var(--radius-md);
-  font-size: 1rem;
-  font-weight: 500;
+  padding: 0.8rem 2.2rem;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-position 0.25s ease;
 }
 
-.submit-btn:hover {
-  background-color: var(--color-primary-hover);
+.submit-btn:hover:not(:disabled),
+.upload-another-btn:hover {
+  background-position: 100% 0;
+  color: #0f0f0f;
 }
 
 .submit-btn:disabled {
-  background-color: var(--color-text-muted);
-  opacity: 0.6;
+  background-image: none;
+  background-color: #4a4a4a;
+  color: #999189;
   cursor: not-allowed;
-}
-
-.submit-btn:disabled:hover {
-  background-color: var(--color-text-muted);
 }
 
 .submit-help {
   font-size: 0.85rem;
-  color: var(--color-text-muted);
-  margin: 0.5rem 0 0 0;
+  color: var(--sheet-label);
+  margin: 0.75rem 0 0;
 }
 
 .login-prompt {
@@ -262,17 +348,16 @@ main {
   gap: 0.5rem;
 }
 
-/* Notification hint (inline in instructions) */
 .notification-hint {
-  font-size: 0.9rem;
-  color: var(--color-text-muted);
-  margin: -0.5rem 0 1rem 0;
+  font-size: 0.875rem;
+  color: var(--sheet-label);
+  margin: 0 0 0.25rem;
 }
 
 .inline-login-btn {
   background: none;
   border: none;
-  color: var(--color-primary);
+  color: var(--sheet-link);
   cursor: pointer;
   padding: 0;
   font-size: inherit;
@@ -281,7 +366,30 @@ main {
 }
 
 .inline-login-btn:hover {
-  color: var(--color-primary-hover);
+  color: var(--color-coral);
+}
+
+/* Instructions */
+.instructions h2:first-child {
+  margin-top: 0.5rem;
+}
+
+.instructions h2 {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--color-orange);
+  margin: 1.75rem 0 0.5rem;
+}
+
+.instructions p {
+  color: var(--color-muted);
+  font-size: 0.92rem;
+  margin: 0 0 1rem;
+}
+
+.instructions strong {
+  color: var(--color-text);
 }
 
 /* Success page */
@@ -291,38 +399,41 @@ main {
 }
 
 .success-container h1 {
-  color: var(--color-success);
+  font-weight: 800;
+  color: var(--color-green);
+}
+
+.success-container p {
+  color: var(--color-muted);
+  max-width: 52ch;
+  margin: 0 auto;
 }
 
 .upload-another-btn {
-  display: inline-block;
-  margin-top: 1.5rem;
-  padding: 0.75rem 2rem;
-  background-color: var(--color-primary);
-  color: white;
-  border-radius: var(--radius-md);
-  font-size: 1rem;
-  transition: background-color 0.2s;
-}
-
-.upload-another-btn:hover {
-  background-color: var(--color-primary-hover);
-  color: white;
+  margin-top: 2rem;
 }
 
 /* Admin page */
 .admin-container h1 {
+  font-weight: 800;
   margin-top: 0;
 }
 
+.admin-container h2 {
+  font-weight: 700;
+  font-size: 1.15rem;
+  margin-top: 2.5rem;
+}
+
 .admin-stats {
+  font-family: var(--font-mono);
   margin-bottom: 1.5rem;
-  font-size: 0.9rem;
-  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  color: var(--color-muted);
 }
 
 .empty-state {
-  color: var(--color-text-muted);
+  color: var(--color-muted);
   font-style: italic;
 }
 
@@ -334,17 +445,18 @@ main {
 }
 
 .submission-card {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  background-color: var(--color-panel);
+  border: 1px solid var(--color-edge);
+  border-radius: 6px;
   overflow: hidden;
 }
 
+/* Checkerboard: white ink prints as transparent, so show alpha honestly */
 .submission-thumbnail {
   width: 100%;
   height: 180px;
   object-fit: contain;
-  background-color: var(--color-bg);
+  background: repeating-conic-gradient(#e8e4da 0% 25%, #ffffff 0% 50%) 0 0 / 16px 16px;
   display: block;
 }
 
@@ -353,8 +465,9 @@ main {
 }
 
 .submission-filename {
-  font-size: 0.8125rem;
-  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--color-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -362,39 +475,43 @@ main {
 }
 
 .submission-width {
+  font-family: var(--font-mono);
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600;
+  color: #fff;
   margin-bottom: 0.5rem;
 }
 
 .status-badge {
   display: inline-block;
   padding: 0.125rem 0.5rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.75rem;
-  font-weight: 600;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.06em;
   margin-bottom: 0.25rem;
 }
 
 .status-pending {
-  background-color: rgba(229, 160, 48, 0.15);
-  color: var(--color-warning);
+  background-color: var(--color-yellow);
+  color: #111;
 }
 
 .status-done {
-  background-color: rgba(59, 165, 93, 0.15);
-  color: var(--color-success);
+  background-color: var(--color-green);
+  color: #111;
 }
 
 .has-telegram {
   font-size: 0.75rem;
-  color: var(--color-text-muted);
+  color: var(--color-muted);
 }
 
 .no-telegram {
   font-size: 0.75rem;
-  color: var(--color-text-muted);
+  color: var(--color-muted);
   opacity: 0.6;
 }
 
@@ -408,40 +525,44 @@ main {
 .download-btn {
   display: inline-block;
   padding: 0.375rem 0.75rem;
-  background-color: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  background: none;
+  border: 1px solid #3a3a3a;
+  border-radius: 4px;
   color: var(--color-text);
   font-size: 0.8125rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: border-color 0.15s, color 0.15s;
 }
 
 .download-btn:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
+  border-color: var(--color-orange);
+  color: var(--color-orange);
 }
 
 .mark-done-btn {
   padding: 0.375rem 0.75rem;
-  background-color: var(--color-success);
+  background-color: var(--color-green);
   border: none;
-  border-radius: var(--radius-sm);
-  color: #ffffff;
+  border-radius: 4px;
+  color: #06130c;
   font-size: 0.8125rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: filter 0.15s;
 }
 
 .mark-done-btn:hover {
-  opacity: 0.85;
+  filter: brightness(0.92);
 }
 
 /* Responsive */
 @media (max-width: 600px) {
   main {
-    padding: 1rem;
+    padding: 1rem 1rem 3rem;
+  }
+
+  .upload-form {
+    padding: 2rem 1.4rem 1.4rem;
   }
 
   .submissions-grid {
@@ -451,5 +572,11 @@ main {
   .header-content {
     flex-direction: column;
     gap: 0.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
   }
 }

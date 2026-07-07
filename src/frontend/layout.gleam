@@ -6,7 +6,7 @@ import lustre/element/html
 
 const js_hash = "e8af5244"
 
-const css_hash = "d7ea5e3c"
+const css_hash = "79f32771"
 
 pub fn view(
   elements: List(Element(Nil)),
@@ -14,10 +14,18 @@ pub fn view(
 ) -> Element(Nil) {
   html.html([], [
     html.head([], [
+      html.meta([attribute.attribute("charset", "utf-8")]),
       html.title([], "Kadei's EMFCamp temporary tattoos"),
       html.meta([
         attribute.name("viewport"),
         attribute.attribute("content", "width=device-width, initial-scale=1"),
+      ]),
+      html.link([
+        attribute.rel("preload"),
+        attribute.href("/static/fonts/raleway-latin.woff2"),
+        attribute.attribute("as", "font"),
+        attribute.type_("font/woff2"),
+        attribute.attribute("crossorigin", ""),
       ]),
       html.link([
         attribute.rel("stylesheet"),

@@ -15,12 +15,26 @@ pub fn view(
     },
     dev_login_form(login_state),
     html.div([attribute.class("upload-container")], [
-      html.p([], [
-        html.strong([], [
-          html.text("Upload an image to get it printed as a temporary tattoo! "),
-        ]),
+      html.h1([], [
+        html.text("Upload an image, get it printed as a temporary tattoo"),
+      ]),
+      html.p([attribute.class("lede")], [
         html.text(
-          "When it's done, pick it up from Kadei at the Furry High Commission.",
+          "When it's done, pick it up from Kadei at the Furry High Commission. Any questions, message me on telegram ",
+        ),
+        html.a([attribute.href("https://t.me/kadei_rat")], [
+          html.text("@kadei_rat"),
+        ]),
+        html.text(" or signal "),
+        html.a(
+          [
+            attribute.href(
+              "https://signal.me/#eu/cbNjdbFvsmKnInXqszOJoJkycyexcAhkAHZNw_DBhWc_xGIKy3NGs4FpRXdnQo_r",
+            ),
+          ],
+          [
+            html.text("@kadei.69"),
+          ],
         ),
       ]),
       upload_form(login_state),
