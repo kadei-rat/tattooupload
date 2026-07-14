@@ -147,12 +147,12 @@ fn login_section(login_state: LoginState) -> Element(Nil) {
     LoggedIn(user) ->
       html.p([attribute.class("notification-hint")], [
         html.text(
-          "Uploading as "
+          "uploading as "
           <> case user.username {
             Some(u) -> "@" <> u
             None -> user.first_name
           }
-          <> " — you'll be notified on Telegram when your tattoo is ready.",
+          <> ". you'll be notified on Telegram when your tattoo is ready.",
         ),
       ])
     LoggedOut(bot_name, dev_mode, return_url) ->

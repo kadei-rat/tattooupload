@@ -2,35 +2,23 @@
   box-sizing: border-box;
 }
 
-/* Raleway variable font (EMF's heading face), self-hosted */
-@font-face {
-  font-family: "Raleway";
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url("/static/fonts/raleway-latin.woff2") format("woff2");
-}
-
 :root {
   color-scheme: dark;
 
-  /* EMF 2026 palette: #0f0f0f ground, yellow→orange→coral brand gradient */
   --color-bg: #0f0f0f;
   --color-panel: #191919;
   --color-edge: #2a2a2a;
   --color-text: #e8e5df;
-  --color-muted: #a09a91;
+  --color-muted: #e0dad1;
 
   --color-yellow: #f9e200;
-  --color-orange: #f77f02;
+  --color-orange: #ff8f12;
   --color-coral: #f5515e;
   --color-green: #2ae28c;
-  --rainbow: linear-gradient(90deg, #f9e200 0%, #f77f02 50%, #f5515e 100%);
 
-  /* the transfer sheet */
   --sheet: #343434;
   --sheet-ink: #f0ede6;
-  --sheet-label: #aaa398;
+  --sheet-label: #eae3d8;
   --sheet-edge: #4e4e4e;
   --sheet-link: var(--color-orange);
 
@@ -68,15 +56,14 @@ a:hover {
 }
 
 h1, h2, h3 {
-  font-family: var(--font-display);
+  font-family: var(--font-mono);
   color: #fff;
 }
 
-/* Header */
 .site-header {
   background-color: var(--color-bg);
   border-bottom: 3px solid;
-  border-image: var(--rainbow) 1;
+  border-color: var(--color-orange);
   padding: 0.85rem 1.5rem;
 }
 
@@ -89,11 +76,11 @@ h1, h2, h3 {
 }
 
 .site-title {
-  font-family: var(--font-display);
+  font-family: var(--font-mono);
   font-size: 1.15rem;
   font-weight: 800;
   letter-spacing: 0.01em;
-  background-image: var(--rainbow);
+  background-color: var(--color-orange);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
@@ -165,14 +152,12 @@ h1, h2, h3 {
   color: var(--color-text);
 }
 
-/* Main content */
 main {
   max-width: 900px;
   margin: 0 auto;
   padding: 2rem 1.5rem 4rem;
 }
 
-/* Error banner */
 .error-banner {
   background-color: var(--color-coral);
   color: #16090a;
@@ -197,7 +182,6 @@ main {
   padding: 0 0.25rem;
 }
 
-/* Upload page */
 .upload-container h1 {
   font-weight: 800;
   font-size: clamp(1.6rem, 4.5vw, 2.3rem);
@@ -212,12 +196,8 @@ main {
   margin: 0 0 2rem;
 }
 
-/* Upload form: the tattoo transfer sheet, raised off the page ground.
-   Dashed inset border is the cut line. */
 .upload-form {
   position: relative;
-  background-color: var(--sheet);
-  color: var(--sheet-ink);
   padding: 2.5rem 2.25rem 1.75rem;
   margin-bottom: 1.75rem;
   border-radius: 3px;
@@ -241,8 +221,6 @@ main {
   transform: translateY(-54%);
   font-size: 1rem;
   line-height: 1;
-  color: #9a948a;
-  background-color: var(--sheet);
   padding: 0 5px;
 }
 
@@ -254,9 +232,8 @@ main {
   display: block;
   margin-bottom: 0.5rem;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 1rem;
   font-weight: 600;
-  text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--sheet-label);
 }
@@ -276,7 +253,6 @@ main {
   font-family: var(--font-mono);
   font-size: 0.72rem;
   font-weight: 600;
-  text-transform: uppercase;
   letter-spacing: 0.05em;
   background-color: var(--sheet-ink);
   color: var(--sheet);
@@ -306,15 +282,12 @@ main {
 .submit-btn,
 .upload-another-btn {
   display: inline-block;
-  font-family: var(--font-display);
-  font-weight: 800;
+  font-family: var(--font-mono);
+  font-weight: 700;
   font-size: 0.95rem;
-  text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #0f0f0f;
-  background-image: var(--rainbow);
-  background-size: 160% 100%;
-  background-position: 0 0;
+  background-color: var(--color-orange);
   border: none;
   padding: 0.8rem 2.2rem;
   border-radius: 4px;
@@ -369,7 +342,6 @@ main {
   color: var(--color-coral);
 }
 
-/* Instructions */
 .instructions h2:first-child {
   margin-top: 0.5rem;
 }
@@ -384,7 +356,7 @@ main {
 
 .instructions p {
   color: var(--color-muted);
-  font-size: 0.92rem;
+  font-size: 1rem;
   margin: 0 0 1rem;
 }
 
@@ -392,7 +364,6 @@ main {
   color: var(--color-text);
 }
 
-/* Success page */
 .success-container {
   text-align: center;
   padding: 3rem 1rem;
@@ -413,7 +384,6 @@ main {
   margin-top: 2rem;
 }
 
-/* Admin page */
 .admin-container h1 {
   font-weight: 800;
   margin-top: 0;
@@ -451,7 +421,6 @@ main {
   overflow: hidden;
 }
 
-/* Checkerboard: white ink prints as transparent, so show alpha honestly */
 .submission-thumbnail {
   width: 100%;
   height: 180px;
@@ -489,7 +458,6 @@ main {
   font-family: var(--font-mono);
   font-size: 0.68rem;
   font-weight: 700;
-  text-transform: uppercase;
   letter-spacing: 0.06em;
   margin-bottom: 0.25rem;
 }
@@ -555,7 +523,6 @@ main {
   filter: brightness(0.92);
 }
 
-/* Responsive */
 @media (max-width: 600px) {
   main {
     padding: 1rem 1rem 3rem;
