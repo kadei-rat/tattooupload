@@ -22,7 +22,7 @@ pub fn view(
         html.text(
           "When it's done, pick it up from Kadei at the Furry High Commission. Any questions, message me on telegram ",
         ),
-        html.a([attribute.href("https://t.me/kadei_rat")], [
+        html.a([attribute.href("https://telegram.me/kadei_rat")], [
           html.text("@kadei_rat"),
         ]),
         html.text(" or signal "),
@@ -58,7 +58,7 @@ fn instructions() -> Element(Nil) {
       html.text(
         "If you are unable to pick up in person at the FHC for accessibility reasons, message me on telegram ",
       ),
-      html.a([attribute.href("https://t.me/kadei_rat")], [
+      html.a([attribute.href("https://telegram.me/kadei_rat")], [
         html.text("@kadei_rat"),
       ]),
       html.text(" or signal "),

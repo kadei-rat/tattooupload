@@ -10,7 +10,7 @@ pub fn view() -> List(Element(Nil)) {
         html.text(
           "Your image has been submitted. If you logged in with Telegram, you'll be notified when your tattoo is ready for pickup. Otherwise, check in at the Furry High Commission in a day, or poke me on telegram ",
         ),
-        html.a([attribute.href("https://t.me/kadei_rat")], [
+        html.a([attribute.href("https://telegram.me/kadei_rat")], [
           html.text("@kadei_rat"),
         ]),
         html.text(" or signal "),
