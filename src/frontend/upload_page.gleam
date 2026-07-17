@@ -20,7 +20,7 @@ pub fn view(
       ]),
       html.p([attribute.class("lede")], [
         html.text(
-          "When it's done, pick it up from Kadei at the Furry High Commission. Any questions, message me on telegram ",
+          "I'm gonna print one batch of these a day, so it won't be ready immediately. Use the telegram login widget and when it's done I'll message you, and you can pick it up from Kadei at the Furry High Commission. Any questions, message me on telegram ",
         ),
         html.a([attribute.href("https://telegram.me/kadei_rat")], [
           html.text("@kadei_rat"),
@@ -90,6 +90,7 @@ fn upload_form(login_state: LoginState) -> Element(Nil) {
       attribute.class("upload-form"),
     ],
     [
+      login_section(login_state),
       html.div([attribute.class("form-group")], [
         html.label([attribute.for("image")], [html.text("Image file")]),
         html.input([
@@ -122,7 +123,6 @@ fn upload_form(login_state: LoginState) -> Element(Nil) {
           attribute.attribute("required", ""),
         ]),
       ]),
-      login_section(login_state),
       html.button(
         [
           attribute.type_("submit"),
