@@ -78,10 +78,6 @@ fn instructions() -> Element(Nil) {
 }
 
 fn upload_form(login_state: LoginState) -> Element(Nil) {
-  let logged_in = case login_state {
-    LoggedIn(_) -> True
-    LoggedOut(_, _, _) -> False
-  }
   html.form(
     [
       attribute.action("/upload"),
@@ -127,17 +123,9 @@ fn upload_form(login_state: LoginState) -> Element(Nil) {
         [
           attribute.type_("submit"),
           attribute.class("submit-btn"),
-          attribute.disabled(!logged_in),
         ],
         [html.text("Upload")],
       ),
-      case logged_in {
-        True -> element.none()
-        False ->
-          html.p([attribute.class("submit-help")], [
-            html.text("Please log in before uploading an image"),
-          ])
-      },
     ],
   )
 }

@@ -71,13 +71,8 @@ fn parse_float(s: String) -> Result(Float, errors.AppError) {
 
 pub fn handle_upload(req: Request, db: Db, conf: Config) -> Response {
   use formdata <- wisp.require_form(req)
-  use session_data <- redirect_on_err(
-    req,
-    session.get_session(req)
-      |> result.replace_error(errors.authentication_error(
-        "Please log in before uploading an image",
-      )),
-  )
+  let session_data = session.get_session(req) |> option.from_result
+  let user_id = option.map(session_data, fn(s) { s.id })
 
   use width <- redirect_on_err(
     req,
@@ -110,7 +105,7 @@ pub fn handle_upload(req: Request, db: Db, conf: Config) -> Response {
       file.file_name,
       content_type,
       width,
-      Some(session_data.id),
+      user_id,
     )
   {
     Ok(_) -> {
@@ -119,7 +114,7 @@ pub fn handle_upload(req: Request, db: Db, conf: Config) -> Response {
           telegram_notify.notify_upload(
             conf.telegram_bot_token,
             admin_chat_id,
-            Some(session_data),
+            session_data,
           )
         None -> Nil
       }
