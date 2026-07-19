@@ -1,11 +1,11 @@
-import frontend/login_components.{type LoginState, LoggedIn, LoggedOut}
+import frontend/login_components.{type LoginState}
 import gleam/option.{None, Some}
 import lustre/attribute
 import lustre/element.{type Element}
 import lustre/element/html
 
 pub fn view(
-  login_state: LoginState,
+  _login_state: LoginState,
   error: option.Option(String),
 ) -> List(Element(Nil)) {
   [
@@ -13,187 +13,12 @@ pub fn view(
       Some(msg) -> html.div([attribute.class("error-banner")], [html.text(msg)])
       None -> element.none()
     },
-    dev_login_form(login_state),
     html.div([attribute.class("upload-container")], [
       html.h1([], [
-        html.text("Upload an image, get it printed as a temporary tattoo"),
-      ]),
-      html.p([attribute.class("lede")], [
         html.text(
-          "I'm gonna print one batch of these a day, so it won't be ready immediately. Use the telegram login widget and when it's done I'll message you, and you can pick it up from Kadei at the Furry High Commission. Any questions, message me on telegram ",
-        ),
-        html.a([attribute.href("https://telegram.me/kadei_rat")], [
-          html.text("@kadei_rat"),
-        ]),
-        html.text(" or signal "),
-        html.a(
-          [
-            attribute.href(
-              "https://signal.me/#eu/cbNjdbFvsmKnInXqszOJoJkycyexcAhkAHZNw_DBhWc_xGIKy3NGs4FpRXdnQo_r",
-            ),
-          ],
-          [
-            html.text("@kadei.69"),
-          ],
+          "That's it for this year's emfcamp, hope y'all enjoyed the tattoos!",
         ),
       ]),
-      upload_form(login_state),
-      instructions(),
     ]),
   ]
-}
-
-fn instructions() -> Element(Nil) {
-  html.div([attribute.class("instructions")], [
-    html.h2([], [html.text("Advice for those with dark skin")]),
-    html.p([], [
-      html.text(
-        "My printer can't do white ink, white is equivalent to transparent. That means that if you have darker skin, I recommend using ",
-      ),
-      html.strong([], [html.text("fully-saturated light colours ")]),
-      html.text("(like yellow) for light areas of the tattoo"),
-    ]),
-    html.h2([], [html.text("Accessibility")]),
-    html.p([], [
-      html.text(
-        "If you are unable to pick up in person at the FHC for accessibility reasons, message me on telegram ",
-      ),
-      html.a([attribute.href("https://telegram.me/kadei_rat")], [
-        html.text("@kadei_rat"),
-      ]),
-      html.text(" or signal "),
-      html.a(
-        [
-          attribute.href(
-            "https://signal.me/#eu/cbNjdbFvsmKnInXqszOJoJkycyexcAhkAHZNw_DBhWc_xGIKy3NGs4FpRXdnQo_r",
-          ),
-        ],
-        [
-          html.text("@kadei.69"),
-        ],
-      ),
-      html.text(" to arrange delivery (by me or through emfcamp post)"),
-    ]),
-  ])
-}
-
-fn upload_form(login_state: LoginState) -> Element(Nil) {
-  html.form(
-    [
-      attribute.action("/upload"),
-      attribute.method("post"),
-      attribute.attribute("enctype", "multipart/form-data"),
-      attribute.class("upload-form"),
-    ],
-    [
-      login_section(login_state),
-      html.div([attribute.class("form-group")], [
-        html.label([attribute.for("image")], [html.text("Image file")]),
-        html.input([
-          attribute.type_("file"),
-          attribute.name("image"),
-          attribute.id("image"),
-          attribute.accept([
-            "image/png",
-            "image/jpeg",
-            "image/gif",
-            "image/webp",
-            "image/svg+xml",
-            "image/bmp",
-          ]),
-          attribute.attribute("required", ""),
-        ]),
-      ]),
-      html.div([attribute.class("form-group")], [
-        html.label([attribute.for("width_cm")], [
-          html.text("Requested width (cm)"),
-        ]),
-        html.input([
-          attribute.type_("number"),
-          attribute.name("width_cm"),
-          attribute.id("width_cm"),
-          attribute.attribute("min", "1"),
-          attribute.attribute("max", "20"),
-          attribute.attribute("step", "0.1"),
-          attribute.value("5"),
-          attribute.attribute("required", ""),
-        ]),
-      ]),
-      html.button(
-        [
-          attribute.type_("submit"),
-          attribute.class("submit-btn"),
-        ],
-        [html.text("Upload")],
-      ),
-    ],
-  )
-}
-
-fn login_section(login_state: LoginState) -> Element(Nil) {
-  case login_state {
-    LoggedIn(user) ->
-      html.p([attribute.class("notification-hint")], [
-        html.text(
-          "uploading as "
-          <> case user.username {
-            Some(u) -> "@" <> u
-            None -> user.first_name
-          }
-          <> ". you'll be notified on Telegram when your tattoo is ready.",
-        ),
-      ])
-    LoggedOut(bot_name, dev_mode, return_url) ->
-      html.div([attribute.class("form-group login-prompt")], [
-        html.p([attribute.class("notification-hint")], [
-          html.text(
-            "Log in with Telegram to upload — we'll notify you on Telegram when your tattoo is ready.",
-          ),
-        ]),
-        case dev_mode {
-          True ->
-            html.button(
-              [
-                attribute.type_("submit"),
-                attribute.attribute("form", "dev-login-form"),
-                attribute.class("inline-login-btn"),
-              ],
-              [html.text("Log in (dev)")],
-            )
-          False ->
-            html.div(
-              [
-                attribute.id("telegram-login"),
-                attribute.attribute("data-telegram-login", bot_name),
-                attribute.attribute("data-size", "medium"),
-                attribute.attribute("data-radius", "5"),
-                attribute.attribute("data-request-access", "write"),
-                attribute.attribute("data-return-url", return_url),
-              ],
-              [],
-            )
-        },
-      ])
-  }
-}
-
-fn dev_login_form(login_state: LoginState) -> Element(Nil) {
-  case login_state {
-    LoggedOut(_, True, return_url) ->
-      html.form(
-        [
-          attribute.id("dev-login-form"),
-          attribute.action("/login"),
-          attribute.method("post"),
-        ],
-        [
-          html.input([
-            attribute.type_("hidden"),
-            attribute.name("return_url"),
-            attribute.value(return_url),
-          ]),
-        ],
-      )
-    _ -> element.none()
-  }
 }
