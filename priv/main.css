@@ -2,29 +2,74 @@
   box-sizing: border-box;
 }
 
+@font-face {
+  font-family: "Raleway";
+  src: url("/static/fonts/raleway-latin.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
-  --color-bg: #0f0f0f;
-  --color-panel: #191919;
-  --color-edge: #2a2a2a;
-  --color-text: #e8e5df;
-  --color-muted: #e0dad1;
+  --color-bg: #f8f4ee;
+  --color-panel: #ffffff;
+  --color-edge: rgba(0, 0, 0, 0.11);
+  --color-edge-strong: rgba(0, 0, 0, 0.22);
+  --color-text: rgba(0, 0, 0, 0.87);
+  --color-muted: rgba(0, 0, 0, 0.55);
 
-  --color-yellow: #f9e200;
-  --color-orange: #ff8f12;
-  --color-coral: #f5515e;
-  --color-green: #2ae28c;
+  /* --accent meets 4.5:1 as text; --accent-quiet is decorative only. */
+  --accent: #3f7145;
+  --accent-hover: #2e5433;
+  --accent-quiet: #5f9b65;
+  --on-accent: #ffffff;
 
-  --sheet: #343434;
-  --sheet-ink: #f0ede6;
-  --sheet-label: #eae3d8;
-  --sheet-edge: #4e4e4e;
-  --sheet-link: var(--color-orange);
+  --warn-bg: #f6e8d5;
+  --warn-ink: #7d5610;
+  --danger-bg: #f7e0dd;
+  --danger-ink: #8e2f22;
 
-  --font-display: "Raleway", "Helvetica Neue", Arial, sans-serif;
-  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --sheet: #ffffff;
+  --sheet-ink: var(--color-text);
+  --sheet-label: var(--color-muted);
+  --sheet-edge: rgba(0, 0, 0, 0.18);
+  --sheet-link: var(--accent);
+  --sheet-shadow: 0 1px 3px rgba(0, 0, 0, 0.07), 0 8px 28px rgba(0, 0, 0, 0.06);
+  --checker: #ece7de;
+
+  --font-ui: "Raleway", Calibri, "Gill Sans", "Gill Sans MT", "Helvetica Neue", sans-serif;
+  --font-body: Charter, "Sitka Text", "Palatino Linotype", Georgia, "Noto Serif", serif;
   --font-mono: ui-monospace, "JetBrains Mono", "Fira Code", "Cascadia Code", Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --color-bg: #1c1c1c;
+    --color-panel: #262626;
+    --color-edge: rgba(255, 255, 255, 0.13);
+    --color-edge-strong: rgba(255, 255, 255, 0.26);
+    --color-text: rgba(255, 255, 255, 0.87);
+    --color-muted: rgba(255, 255, 255, 0.56);
+
+    --accent: #8fc496;
+    --accent-hover: #b0d9b6;
+    --accent-quiet: #5f9b65;
+    --on-accent: #10240f;
+
+    --warn-bg: #3a2f1a;
+    --warn-ink: #e0bd77;
+    --danger-bg: #3d221e;
+    --danger-ink: #e8a79c;
+
+    --sheet: #262626;
+    --sheet-edge: rgba(255, 255, 255, 0.22);
+    --sheet-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 8px 28px rgba(0, 0, 0, 0.32);
+    --checker: #313131;
+  }
 }
 
 body {
@@ -33,62 +78,65 @@ body {
   color: var(--color-text);
   margin: 0;
   padding: 0;
-  line-height: 1.6;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: var(--color-orange);
-  color: var(--color-bg);
+  background: var(--accent-quiet);
+  color: #fff;
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-orange);
+  outline: 2px solid var(--accent-quiet);
   outline-offset: 2px;
 }
 
 a {
-  color: var(--color-orange);
+  color: var(--accent);
   text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
 }
 
 a:hover {
-  color: var(--color-coral);
+  color: var(--accent-hover);
+  border-bottom-color: currentColor;
 }
 
 h1, h2, h3 {
-  font-family: var(--font-mono);
-  color: #fff;
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: var(--color-text);
+  letter-spacing: -0.005em;
 }
 
 .site-header {
-  background-color: var(--color-bg);
-  border-bottom: 3px solid;
-  border-color: var(--color-orange);
-  padding: 0.85rem 1.5rem;
+  background-color: var(--color-panel);
+  border-bottom: 1px solid var(--color-edge);
+  padding: 0.7rem 1.5rem;
 }
 
 .header-content {
-  max-width: 900px;
+  max-width: 1100px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
 }
 
 .site-title {
-  font-family: var(--font-mono);
-  font-size: 1.15rem;
-  font-weight: 800;
-  letter-spacing: 0.01em;
-  background-color: var(--color-orange);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+  font-family: var(--font-ui);
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+  border-bottom: none;
 }
 
 .site-title:hover {
-  filter: brightness(1.2);
+  color: var(--accent);
 }
 
 .header-right {
@@ -110,13 +158,14 @@ h1, h2, h3 {
 }
 
 .user-avatar {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   border: 1px solid var(--color-edge);
 }
 
 .user-name {
+  font-family: var(--font-ui);
   font-size: 0.875rem;
   color: var(--color-muted);
 }
@@ -128,9 +177,10 @@ h1, h2, h3 {
 }
 
 .header-link {
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
-  color: var(--color-orange);
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  color: var(--accent);
+  border-bottom: none;
 }
 
 .logout-form {
@@ -138,34 +188,40 @@ h1, h2, h3 {
 }
 
 .logout-btn {
+  font-family: var(--font-ui);
   background: none;
-  border: 1px solid #3a3a3a;
+  border: 1px solid var(--color-edge-strong);
   color: var(--color-muted);
-  padding: 0.375rem 0.75rem;
-  border-radius: 4px;
+  padding: 0.3rem 0.7rem;
+  border-radius: 3px;
   cursor: pointer;
   font-size: 0.8125rem;
+  transition: border-color 0.15s, color 0.15s;
 }
 
 .logout-btn:hover {
-  border-color: var(--color-orange);
+  border-color: var(--accent-quiet);
   color: var(--color-text);
 }
 
 main {
-  max-width: 900px;
+  max-width: 720px;
   margin: 0 auto;
-  padding: 2rem 1.5rem 4rem;
+  padding: 2.5rem 1.5rem 5rem;
+}
+
+main:has(.admin-container) {
+  max-width: 1100px;
 }
 
 .error-banner {
-  background-color: var(--color-coral);
-  color: #16090a;
-  font-weight: 500;
-  padding: 0.75rem 1rem;
-  border-radius: 4px;
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
+  background-color: var(--danger-bg);
+  color: var(--danger-ink);
+  border-left: 3px solid currentColor;
+  padding: 0.7rem 1rem;
+  border-radius: 2px;
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -183,33 +239,32 @@ main {
 }
 
 .upload-container h1 {
-  font-weight: 800;
-  font-size: clamp(1.6rem, 4.5vw, 2.3rem);
-  line-height: 1.15;
-  letter-spacing: -0.015em;
-  margin: 1rem 0 0.5rem;
+  font-size: clamp(1.7rem, 4.5vw, 2.35rem);
+  line-height: 1.2;
+  margin: 0 0 0.75rem;
 }
 
 .lede {
   color: var(--color-muted);
-  font-size: 1.05rem;
-  margin: 0 0 2rem;
+  margin: 0 0 2.5rem;
 }
 
 .upload-form {
   position: relative;
+  background-color: var(--sheet);
   padding: 2.5rem 2.25rem 1.75rem;
-  margin-bottom: 1.75rem;
-  border-radius: 3px;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+  margin-bottom: 2.5rem;
+  border: 1px solid var(--color-edge);
+  border-radius: 2px;
+  box-shadow: var(--sheet-shadow);
 }
 
 .upload-form::before {
   content: "";
   position: absolute;
   inset: 11px;
-  border: 1.5px dashed #757067;
-  border-radius: 8px;
+  border: 1px dashed var(--sheet-edge);
+  border-radius: 4px;
   pointer-events: none;
 }
 
@@ -217,11 +272,13 @@ main {
   content: "\2702\FE0E";
   position: absolute;
   top: 11px;
-  left: 2.75rem;
-  transform: translateY(-54%);
-  font-size: 1rem;
+  left: 2.5rem;
+  transform: translateY(-52%);
+  font-size: 0.95rem;
   line-height: 1;
-  padding: 0 5px;
+  padding: 0 6px;
+  color: var(--color-muted);
+  background-color: var(--sheet);
 }
 
 .form-group {
@@ -230,85 +287,86 @@ main {
 
 .form-group label {
   display: block;
-  margin-bottom: 0.5rem;
-  font-family: var(--font-mono);
-  font-size: 1rem;
+  margin-bottom: 0.4rem;
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--sheet-label);
+}
+
+.form-group input[type="file"],
+.form-group input[type="number"] {
+  font-family: var(--font-ui);
+  padding: 0.5rem;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-edge-strong);
+  border-radius: 3px;
+  color: var(--sheet-ink);
+  font-size: 0.9rem;
 }
 
 .form-group input[type="file"] {
   display: block;
   width: 100%;
-  padding: 0.55rem;
-  background-color: #2a2a2a;
-  border: 1px solid var(--sheet-edge);
-  border-radius: 4px;
-  color: var(--sheet-ink);
-  font-size: 0.875rem;
+}
+
+.form-group input[type="number"] {
+  width: 110px;
 }
 
 .form-group input[type="file"]::file-selector-button {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.05em;
-  background-color: var(--sheet-ink);
-  color: var(--sheet);
-  border: none;
+  background-color: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent-quiet);
   border-radius: 3px;
-  padding: 0.5rem 0.9rem;
+  padding: 0.4rem 0.85rem;
   margin-right: 0.9rem;
   cursor: pointer;
 }
 
-.form-group input[type="number"] {
-  width: 120px;
-  padding: 0.55rem;
-  background-color: #2a2a2a;
-  border: 1px solid var(--sheet-edge);
-  border-radius: 4px;
-  color: var(--sheet-ink);
-  font-size: 0.875rem;
-}
-
 .form-group input:focus {
   outline: none;
-  border-color: var(--color-orange);
-  box-shadow: 0 0 0 2px rgba(247, 127, 2, 0.3);
+  border-color: var(--accent-quiet);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-quiet) 30%, transparent);
 }
 
 .submit-btn,
 .upload-another-btn {
   display: inline-block;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 0.95rem;
-  letter-spacing: 0.05em;
-  color: #0f0f0f;
-  background-color: var(--color-orange);
-  border: none;
-  padding: 0.8rem 2.2rem;
-  border-radius: 4px;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  color: var(--on-accent);
+  background-color: var(--accent);
+  border: 1px solid transparent;
+  border-radius: 3px;
+  padding: 0.7rem 2rem;
   cursor: pointer;
-  transition: background-position 0.25s ease;
+  transition: background-color 0.15s;
 }
 
 .submit-btn:hover:not(:disabled),
 .upload-another-btn:hover {
-  background-position: 100% 0;
-  color: #0f0f0f;
+  background-color: var(--accent-hover);
+  color: var(--on-accent);
 }
 
 .submit-btn:disabled {
-  background-image: none;
-  background-color: #4a4a4a;
-  color: #999189;
+  background-color: transparent;
+  border-color: var(--color-edge-strong);
+  color: var(--color-muted);
   cursor: not-allowed;
 }
 
 .submit-help {
+  font-family: var(--font-ui);
   font-size: 0.85rem;
   color: var(--sheet-label);
   margin: 0.75rem 0 0;
@@ -322,9 +380,14 @@ main {
 }
 
 .notification-hint {
-  font-size: 0.875rem;
+  font-size: 0.95rem;
   color: var(--sheet-label);
   margin: 0 0 0.25rem;
+}
+
+/* The logged-in variant sits directly in the form, without a .form-group's margin. */
+.upload-form > .notification-hint {
+  margin-bottom: 1.5rem;
 }
 
 .inline-login-btn {
@@ -339,66 +402,66 @@ main {
 }
 
 .inline-login-btn:hover {
-  color: var(--color-coral);
+  color: var(--accent-hover);
 }
 
 .instructions h2:first-child {
-  margin-top: 0.5rem;
+  margin-top: 0;
 }
 
 .instructions h2 {
-  font-family: var(--font-mono);
+  font-size: 1.2rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
-  color: var(--color-orange);
-  margin: 1.75rem 0 0.5rem;
+  color: var(--color-text);
+  margin: 2.25rem 0 0.4rem;
 }
 
 .instructions p {
   color: var(--color-muted);
-  font-size: 1rem;
   margin: 0 0 1rem;
 }
 
 .instructions strong {
   color: var(--color-text);
+  font-weight: 600;
 }
 
 .success-container {
-  text-align: center;
-  padding: 3rem 1rem;
+  padding: 3rem 0;
 }
 
 .success-container h1 {
-  font-weight: 800;
-  color: var(--color-green);
+  font-size: 2rem;
+  margin: 0 0 1rem;
 }
 
 .success-container p {
   color: var(--color-muted);
-  max-width: 52ch;
-  margin: 0 auto;
+  max-width: 56ch;
+  margin: 0;
 }
 
 .upload-another-btn {
-  margin-top: 2rem;
-}
-
-.admin-container h1 {
-  font-weight: 800;
-  margin-top: 0;
-}
-
-.admin-container h2 {
-  font-weight: 700;
-  font-size: 1.15rem;
   margin-top: 2.5rem;
 }
 
+.admin-container h1 {
+  font-size: 1.9rem;
+  margin: 0 0 0.5rem;
+}
+
+.admin-container h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 3rem 0 1rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--color-edge);
+}
+
 .admin-stats {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   margin-bottom: 1.5rem;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   color: var(--color-muted);
 }
 
@@ -410,14 +473,14 @@ main {
 .submissions-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1rem;
+  gap: 1.25rem;
   margin-bottom: 2rem;
 }
 
 .submission-card {
   background-color: var(--color-panel);
   border: 1px solid var(--color-edge);
-  border-radius: 6px;
+  border-radius: 3px;
   overflow: hidden;
 }
 
@@ -425,8 +488,9 @@ main {
   width: 100%;
   height: 180px;
   object-fit: contain;
-  background: repeating-conic-gradient(#e8e4da 0% 25%, #ffffff 0% 50%) 0 0 / 16px 16px;
+  background: repeating-conic-gradient(var(--checker) 0% 25%, var(--color-panel) 0% 50%) 0 0 / 16px 16px;
   display: block;
+  border-bottom: 1px solid var(--color-edge);
 }
 
 .submission-info {
@@ -444,47 +508,49 @@ main {
 }
 
 .submission-width {
-  font-family: var(--font-mono);
-  font-size: 0.9rem;
+  font-family: var(--font-ui);
+  font-size: 1rem;
   font-weight: 600;
-  color: #fff;
   margin-bottom: 0.5rem;
 }
 
 .status-badge {
   display: inline-block;
-  padding: 0.125rem 0.5rem;
-  border-radius: 3px;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 2px;
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
   margin-bottom: 0.25rem;
 }
 
 .status-pending {
-  background-color: var(--color-yellow);
-  color: #111;
+  background-color: var(--warn-bg);
+  color: var(--warn-ink);
 }
 
 .status-done {
-  background-color: var(--color-green);
-  color: #111;
+  background-color: color-mix(in srgb, var(--accent-quiet) 18%, transparent);
+  color: var(--accent);
 }
 
 .has-telegram {
+  font-family: var(--font-ui);
   font-size: 0.75rem;
   color: var(--color-muted);
 }
 
 .no-telegram {
+  font-family: var(--font-ui);
   font-size: 0.75rem;
   color: var(--color-muted);
   opacity: 0.6;
 }
 
 .submission-actions {
-  padding: 0.5rem 1rem 0.75rem;
+  padding: 0.5rem 1rem 0.85rem;
   display: flex;
   gap: 0.5rem;
   align-items: center;
@@ -492,10 +558,11 @@ main {
 
 .download-btn {
   display: inline-block;
-  padding: 0.375rem 0.75rem;
+  font-family: var(--font-ui);
+  padding: 0.35rem 0.75rem;
   background: none;
-  border: 1px solid #3a3a3a;
-  border-radius: 4px;
+  border: 1px solid var(--color-edge-strong);
+  border-radius: 3px;
   color: var(--color-text);
   font-size: 0.8125rem;
   cursor: pointer;
@@ -503,33 +570,38 @@ main {
 }
 
 .download-btn:hover {
-  border-color: var(--color-orange);
-  color: var(--color-orange);
+  border-color: var(--accent-quiet);
+  color: var(--accent);
 }
 
 .mark-done-btn {
-  padding: 0.375rem 0.75rem;
-  background-color: var(--color-green);
-  border: none;
-  border-radius: 4px;
-  color: #06130c;
+  font-family: var(--font-ui);
+  padding: 0.35rem 0.75rem;
+  background-color: var(--accent);
+  border: 1px solid transparent;
+  border-radius: 3px;
+  color: var(--on-accent);
   font-size: 0.8125rem;
   font-weight: 600;
   cursor: pointer;
-  transition: filter 0.15s;
+  transition: background-color 0.15s;
 }
 
 .mark-done-btn:hover {
-  filter: brightness(0.92);
+  background-color: var(--accent-hover);
 }
 
 @media (max-width: 600px) {
   main {
-    padding: 1rem 1rem 3rem;
+    padding: 1.5rem 1rem 3rem;
   }
 
   .upload-form {
     padding: 2rem 1.4rem 1.4rem;
+  }
+
+  .upload-form::after {
+    left: 1.75rem;
   }
 
   .submissions-grid {

@@ -6,7 +6,7 @@ import lustre/element/html
 
 const js_hash = "e8af5244"
 
-const css_hash = "79f32771"
+const css_hash = "c403d5f4"
 
 pub fn view(
   elements: List(Element(Nil)),
