@@ -15,7 +15,7 @@ pub fn view(
   html.html([], [
     html.head([], [
       html.meta([attribute.attribute("charset", "utf-8")]),
-      html.title([], "Kadei's EMFCamp temporary tattoos"),
+      html.title([], "Kadei's LWCW temporary tattoos"),
       html.meta([
         attribute.name("viewport"),
         attribute.attribute("content", "width=device-width, initial-scale=1"),

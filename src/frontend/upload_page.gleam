@@ -72,7 +72,7 @@ fn instructions() -> Element(Nil) {
           html.text("@kadei.69"),
         ],
       ),
-      html.text(" to arrange delivery (by me or through emfcamp post)"),
+      html.text(" to arrange delivery"),
     ]),
   ])
 }

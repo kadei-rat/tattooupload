@@ -15,7 +15,7 @@ pub fn header(state: LoginState) -> Element(Nil) {
     html.div([attribute.class("header-content")], [
       html.div([attribute.class("header-left")], [
         html.a([attribute.href("/"), attribute.class("site-title")], [
-          html.text("Kadei's EMFCamp temporary tattoos"),
+          html.text("Kadei's LWCW temporary tattoos"),
         ]),
       ]),
       html.div([attribute.class("header-right")], [login_area(state)]),
