@@ -8,7 +8,7 @@ pub fn view() -> List(Element(Nil)) {
       html.h1([], [html.text("Image uploaded!")]),
       html.p([], [
         html.text(
-          "Your image has been submitted. If you logged in with Telegram, you'll be notified when your tattoo is ready for pickup. Otherwise, check in at the Furry High Commission in a day, or poke me on telegram ",
+          "Your image has been submitted. If you logged in with Telegram, you'll be notified when your tattoo is ready for pickup. Otherwise, check the box in reception in a day, or poke me on telegram ",
         ),
         html.a([attribute.href("https://telegram.me/kadei_rat")], [
           html.text("@kadei_rat"),

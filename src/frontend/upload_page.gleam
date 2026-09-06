@@ -20,7 +20,7 @@ pub fn view(
       ]),
       html.p([attribute.class("lede")], [
         html.text(
-          "I'm gonna print one batch of these a day, so it won't be ready immediately. Use the telegram login widget and when it's done I'll message you, and you can pick it up from Kadei at the Furry High Commission. Any questions, message me on telegram ",
+          "I'm gonna print one batch of these a day, so it won't be ready immediately. Use the telegram login widget and when it's done I'll message you, and you can pick it up from the box in reception. Any questions, message me on telegram ",
         ),
         html.a([attribute.href("https://telegram.me/kadei_rat")], [
           html.text("@kadei_rat"),
@@ -56,7 +56,7 @@ fn instructions() -> Element(Nil) {
     html.h2([], [html.text("Accessibility")]),
     html.p([], [
       html.text(
-        "If you are unable to pick up in person at the FHC for accessibility reasons, message me on telegram ",
+        "If you are unable to pick up in person for accessibility reasons, message me on telegram ",
       ),
       html.a([attribute.href("https://telegram.me/kadei_rat")], [
         html.text("@kadei_rat"),

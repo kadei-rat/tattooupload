@@ -27,7 +27,7 @@ pub fn notify_ready(token: String, chat_id: Int) -> Nil {
   send_message(
     token,
     chat_id,
-    "Your temporary tattoo is ready for picking up at the Furry High Commission. Ask for Kadei, if they're not there, look for it in the big plastic tupperware on the black plastic crate near the entrance of workshop 1.\n\nIf you're unable to pick up in person at the FHC for accessibility reasons, message @kadei_rat to arrange delivery. To apply it, peel off the transparent plastic, apply the paper design-side down to your skin, and dampen thoroughly. wait 20 seconds, then gently slide the paper off.",
+    "Your temporary tattoo is ready for picking up in the box in reception.\n\nIf you're unable to pick up in person for accessibility reasons, message @kadei_rat to arrange delivery. To apply it, peel off the transparent plastic, apply the paper design-side down to your skin, and dampen thoroughly. wait 20 seconds, then gently slide the paper off.",
   )
 }
 
