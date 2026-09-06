@@ -53,27 +53,6 @@ fn instructions() -> Element(Nil) {
       html.strong([], [html.text("fully-saturated light colours ")]),
       html.text("(like yellow) for light areas of the tattoo"),
     ]),
-    html.h2([], [html.text("Accessibility")]),
-    html.p([], [
-      html.text(
-        "If you are unable to pick up in person for accessibility reasons, message me on telegram ",
-      ),
-      html.a([attribute.href("https://telegram.me/kadei_rat")], [
-        html.text("@kadei_rat"),
-      ]),
-      html.text(" or signal "),
-      html.a(
-        [
-          attribute.href(
-            "https://signal.me/#eu/cbNjdbFvsmKnInXqszOJoJkycyexcAhkAHZNw_DBhWc_xGIKy3NGs4FpRXdnQo_r",
-          ),
-        ],
-        [
-          html.text("@kadei.69"),
-        ],
-      ),
-      html.text(" to arrange delivery"),
-    ]),
   ])
 }
 
